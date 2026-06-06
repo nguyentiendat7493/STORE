@@ -6,7 +6,8 @@
     <div class="container py-5">
         <div class="row justify-content-center">
             <div class="col-md-6 col-lg-5">
-                <h1 class="h3 mb-4">Đăng nhập</h1>
+                <div class="eyebrow mb-2">Account</div>
+                <h1 class="section-title mb-4">Đăng nhập</h1>
                 <form class="sidebar-box" method="POST" action="{{ route('login.store') }}">
                     @csrf
                     <div class="mb-3">

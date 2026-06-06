@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreBrandRequest;
 use App\Models\Brand;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class AdminBrandController extends Controller
@@ -27,14 +27,9 @@ class AdminBrandController extends Controller
         return view('admin.brands.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreBrandRequest $request): RedirectResponse
     {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:100'],
-            'slug' => ['nullable', 'string', 'max:120', Rule::unique('brands', 'slug')],
-            'description' => ['nullable', 'string'],
-            'status' => ['nullable', 'boolean'],
-        ]);
+        $data = $request->validated();
 
         $data['slug'] = $data['slug'] ?: Str::slug($data['name']);
         $data['status'] = $request->boolean('status', true);
@@ -49,14 +44,9 @@ class AdminBrandController extends Controller
         return view('admin.brands.edit', compact('brand'));
     }
 
-    public function update(Request $request, Brand $brand): RedirectResponse
+    public function update(StoreBrandRequest $request, Brand $brand): RedirectResponse
     {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:100'],
-            'slug' => ['nullable', 'string', 'max:120', Rule::unique('brands', 'slug')->ignore($brand->id)],
-            'description' => ['nullable', 'string'],
-            'status' => ['nullable', 'boolean'],
-        ]);
+        $data = $request->validated();
 
         $data['slug'] = $data['slug'] ?: Str::slug($data['name']);
         $data['status'] = $request->boolean('status');

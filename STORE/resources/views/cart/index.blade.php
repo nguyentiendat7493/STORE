@@ -3,8 +3,9 @@
 @section('title', 'Giỏ hàng')
 
 @section('content')
-    <div class="container py-4">
-        <h1 class="h3 mb-4">Giỏ hàng</h1>
+    <div class="container-wide py-5">
+        <div class="eyebrow mb-2">Shopping Bag</div>
+        <h1 class="section-title mb-4">Giỏ hàng</h1>
         @if ($cart->items->isEmpty())
             <div class="empty-state">Giỏ hàng đang trống. <a href="{{ route('products.index') }}">Mua sắm ngay</a></div>
         @else
@@ -54,6 +55,7 @@
                         <strong>{{ $cart->display_total }}</strong>
                     </div>
                     <a class="btn btn-primary w-100" href="{{ route('checkout.index') }}">Thanh toán</a>
+                    <a class="btn btn-outline-dark w-100 mt-2" href="{{ route('products.index') }}">Tiếp tục mua sắm</a>
                 </div>
             </div>
         @endif

@@ -3,9 +3,12 @@
 @section('title', 'Đơn hàng')
 
 @section('content')
-    <div class="container py-4">
+    <div class="container-wide py-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h3 mb-0">Đơn hàng của tôi</h1>
+            <div>
+                <div class="eyebrow mb-2">Account</div>
+                <h1 class="section-title mb-0">Đơn hàng của tôi</h1>
+            </div>
             <form method="GET">
                 <select class="form-select" name="status" onchange="this.form.submit()">
                     <option value="">Tất cả</option>

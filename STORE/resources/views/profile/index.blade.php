@@ -3,8 +3,9 @@
 @section('title', 'Hồ sơ')
 
 @section('content')
-    <div class="container py-4">
-        <h1 class="h3 mb-4">Hồ sơ cá nhân</h1>
+    <div class="container-wide py-5">
+        <div class="eyebrow mb-2">Account</div>
+        <h1 class="section-title mb-4">Hồ sơ cá nhân</h1>
         <div class="row g-4">
             <div class="col-lg-7">
                 <form class="sidebar-box" method="POST" action="{{ route('profile.update') }}">

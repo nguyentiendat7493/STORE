@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreCouponRequest;
 use App\Models\Coupon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class AdminCouponController extends Controller
@@ -26,9 +26,12 @@ class AdminCouponController extends Controller
         return view('admin.coupons.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreCouponRequest $request): RedirectResponse
     {
-        Coupon::create($this->validatedData($request));
+        $data = $request->validated();
+        $data['status'] = $request->boolean('status', true);
+
+        Coupon::create($data);
 
         return redirect()->route('admin.coupons.index')->with('success', 'Đã thêm mã giảm giá.');
     }
@@ -38,9 +41,12 @@ class AdminCouponController extends Controller
         return view('admin.coupons.edit', compact('coupon'));
     }
 
-    public function update(Request $request, Coupon $coupon): RedirectResponse
+    public function update(StoreCouponRequest $request, Coupon $coupon): RedirectResponse
     {
-        $coupon->update($this->validatedData($request, $coupon));
+        $data = $request->validated();
+        $data['status'] = $request->boolean('status', true);
+
+        $coupon->update($data);
 
         return redirect()->route('admin.coupons.index')->with('success', 'Đã cập nhật mã giảm giá.');
     }
@@ -50,21 +56,5 @@ class AdminCouponController extends Controller
         $coupon->delete();
 
         return back()->with('success', 'Đã xóa mã giảm giá.');
-    }
-
-    private function validatedData(Request $request, ?Coupon $coupon = null): array
-    {
-        $data = $request->validate([
-            'code' => ['required', 'string', 'max:50', Rule::unique('coupons', 'code')->ignore($coupon?->id)],
-            'discount_type' => ['required', 'in:percent,fixed'],
-            'discount_value' => ['required', 'numeric', 'min:0'],
-            'start_date' => ['nullable', 'date'],
-            'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
-            'status' => ['nullable', 'boolean'],
-        ]);
-
-        $data['status'] = $request->boolean('status', true);
-
-        return $data;
     }
 }

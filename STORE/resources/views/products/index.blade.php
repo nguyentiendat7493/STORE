@@ -3,10 +3,21 @@
 @section('title', 'Sản phẩm')
 
 @section('content')
-    <div class="container py-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h3 mb-0">Sản phẩm</h1>
-            <div class="text-muted small">{{ $products->total() }} kết quả</div>
+    <div class="container-wide py-5">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a class="text-decoration-none" href="{{ route('home') }}">Trang chủ</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Sản phẩm</li>
+            </ol>
+        </nav>
+        <div class="row g-4 align-items-end mb-5">
+            <div class="col-lg-7">
+                <div class="eyebrow mb-2">Collection</div>
+                <h1 class="section-title mb-0">Sản phẩm</h1>
+            </div>
+            <div class="col-lg-5 text-lg-end">
+                <div class="text-muted small">{{ $products->total() }} kết quả · Grid view</div>
+            </div>
         </div>
 
         <div class="row g-4">
@@ -79,7 +90,7 @@
                             <option value="price_desc" @selected(request('sort') === 'price_desc')>Giá giảm dần</option>
                         </select>
                     </div>
-                    <button class="btn btn-primary w-100" type="submit">Lọc</button>
+                    <button class="btn btn-primary w-100" type="submit">Áp dụng bộ lọc</button>
                 </form>
             </aside>
 

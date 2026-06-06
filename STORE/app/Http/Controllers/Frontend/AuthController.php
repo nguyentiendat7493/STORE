@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class AuthController extends Controller
@@ -17,12 +18,9 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    public function login(Request $request): RedirectResponse
+    public function login(LoginRequest $request): RedirectResponse
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required', 'string'],
-        ]);
+        $credentials = $request->validated();
 
         if (! Auth::attempt($credentials)) {
             return back()->withErrors(['email' => 'Email hoặc mật khẩu không đúng.'])->onlyInput('email');
@@ -38,15 +36,9 @@ class AuthController extends Controller
         return view('auth.register');
     }
 
-    public function register(Request $request): RedirectResponse
+    public function register(RegisterRequest $request): RedirectResponse
     {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:100'],
-            'email' => ['required', 'email', 'max:150', Rule::unique('users', 'email')],
-            'phone' => ['nullable', 'string', 'max:20'],
-            'address' => ['nullable', 'string'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
+        $data = $request->validated();
 
         $user = User::create($data + ['role' => 'customer']);
 

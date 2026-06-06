@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Frontend\CheckoutRequest;
 use App\Models\Cart;
 use App\Models\Coupon;
 use App\Models\Order;
@@ -28,15 +29,9 @@ class CheckoutController extends Controller
         return view('checkout.index', compact('cart'));
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(CheckoutRequest $request): RedirectResponse
     {
-        $data = $request->validate([
-            'customer_name' => ['required', 'string', 'max:100'],
-            'customer_phone' => ['required', 'string', 'max:20'],
-            'customer_address' => ['required', 'string'],
-            'coupon_code' => ['nullable', 'string', 'exists:coupons,code'],
-            'payment_method' => ['required', 'in:cod,bank_transfer,momo,vnpay'],
-        ]);
+        $data = $request->validated();
 
         $cart = $this->currentCart();
         $cart->load('items.productVariant.product', 'items.productVariant.size', 'items.productVariant.color');

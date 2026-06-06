@@ -3,10 +3,11 @@
 @section('title', 'Đơn hàng #'.$order->id)
 
 @section('content')
-    <div class="container py-4">
+    <div class="container-wide py-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h1 class="h3 mb-1">Đơn hàng #{{ $order->id }}</h1>
+                <div class="eyebrow mb-2">Order Detail</div>
+                <h1 class="section-title mb-1">Đơn hàng #{{ $order->id }}</h1>
                 <div class="text-muted">{{ $order->created_at?->format('d/m/Y H:i') }}</div>
             </div>
             <span class="badge text-bg-secondary">{{ $order->status }}</span>
