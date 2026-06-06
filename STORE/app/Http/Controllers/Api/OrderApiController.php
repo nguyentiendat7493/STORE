@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\Concerns\ApiResponds;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Frontend\CheckoutRequest;
 use App\Models\Cart;
 use App\Models\Coupon;
 use App\Models\Order;
@@ -40,15 +41,9 @@ class OrderApiController extends Controller
         return $this->success($order);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(CheckoutRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'customer_name' => ['required', 'string', 'max:100'],
-            'customer_phone' => ['required', 'string', 'max:20'],
-            'customer_address' => ['required', 'string'],
-            'coupon_code' => ['nullable', 'string', 'exists:coupons,code'],
-            'payment_method' => ['required', 'in:cod,bank_transfer,momo,vnpay'],
-        ]);
+        $data = $request->validated();
 
         $cart = Cart::firstOrCreate(['user_id' => $request->user()->id]);
         $cart->load('items.productVariant.product', 'items.productVariant.size', 'items.productVariant.color');

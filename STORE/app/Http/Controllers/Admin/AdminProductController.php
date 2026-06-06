@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreProductRequest;
+use App\Http\Requests\Admin\UpdateProductRequest;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
@@ -11,7 +13,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class AdminProductController extends Controller
@@ -39,9 +40,9 @@ class AdminProductController extends Controller
         return view('admin.products.create', compact('categories', 'brands'));
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreProductRequest $request): RedirectResponse
     {
-        $data = $this->validatedData($request);
+        $data = $request->validated();
         $data['slug'] = $data['slug'] ?: Str::slug($data['name']);
         $data['status'] = $request->boolean('status', true);
 
@@ -67,9 +68,9 @@ class AdminProductController extends Controller
         return view('admin.products.edit', compact('product', 'categories', 'brands'));
     }
 
-    public function update(Request $request, Product $product): RedirectResponse
+    public function update(UpdateProductRequest $request, Product $product): RedirectResponse
     {
-        $data = $this->validatedData($request, $product);
+        $data = $request->validated();
         $data['slug'] = $data['slug'] ?: Str::slug($data['name']);
         $data['status'] = $request->boolean('status');
 
@@ -100,22 +101,6 @@ class AdminProductController extends Controller
         $image->delete();
 
         return back()->with('success', 'Đã xóa ảnh sản phẩm.');
-    }
-
-    private function validatedData(Request $request, ?Product $product = null): array
-    {
-        return $request->validate([
-            'category_id' => ['required', 'exists:categories,id'],
-            'brand_id' => ['nullable', 'exists:brands,id'],
-            'name' => ['required', 'string', 'max:200'],
-            'slug' => ['nullable', 'string', 'max:220', Rule::unique('products', 'slug')->ignore($product?->id)],
-            'description' => ['nullable', 'string'],
-            'price' => ['required', 'numeric', 'min:0'],
-            'sale_price' => ['nullable', 'numeric', 'min:0', 'lte:price'],
-            'gender' => ['required', 'in:male,female,unisex,kids'],
-            'status' => ['nullable', 'boolean'],
-            'images.*' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
-        ]);
     }
 
     private function storeImages(Request $request, Product $product): void

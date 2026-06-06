@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreCategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class AdminCategoryController extends Controller
@@ -27,14 +27,9 @@ class AdminCategoryController extends Controller
         return view('admin.categories.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreCategoryRequest $request): RedirectResponse
     {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:100'],
-            'slug' => ['nullable', 'string', 'max:120', Rule::unique('categories', 'slug')],
-            'description' => ['nullable', 'string'],
-            'status' => ['nullable', 'boolean'],
-        ]);
+        $data = $request->validated();
 
         $data['slug'] = $data['slug'] ?: Str::slug($data['name']);
         $data['status'] = $request->boolean('status', true);
@@ -49,14 +44,9 @@ class AdminCategoryController extends Controller
         return view('admin.categories.edit', compact('category'));
     }
 
-    public function update(Request $request, Category $category): RedirectResponse
+    public function update(StoreCategoryRequest $request, Category $category): RedirectResponse
     {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:100'],
-            'slug' => ['nullable', 'string', 'max:120', Rule::unique('categories', 'slug')->ignore($category->id)],
-            'description' => ['nullable', 'string'],
-            'status' => ['nullable', 'boolean'],
-        ]);
+        $data = $request->validated();
 
         $data['slug'] = $data['slug'] ?: Str::slug($data['name']);
         $data['status'] = $request->boolean('status');
