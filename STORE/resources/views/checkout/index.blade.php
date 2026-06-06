@@ -3,9 +3,10 @@
 @section('title', 'Thanh toán')
 
 @section('content')
-    <div class="container py-4">
-        <h1 class="h3 mb-4">Thanh toán</h1>
-        <div class="row g-4">
+    <div class="container-wide py-5">
+        <div class="eyebrow mb-2">Checkout</div>
+        <h1 class="section-title mb-4">Thanh toán</h1>
+        <div class="row g-5">
             <div class="col-lg-7">
                 <form class="sidebar-box" method="POST" action="{{ route('checkout.store') }}">
                     @csrf
@@ -39,7 +40,8 @@
             </div>
             <div class="col-lg-5">
                 <div class="sidebar-box">
-                    <h2 class="h5 mb-3">Đơn hàng</h2>
+                    <div class="eyebrow mb-2">Order Summary</div>
+                    <h2 class="h4 mb-3" style="font-family: var(--font-editorial);">Đơn hàng</h2>
                     @foreach ($cart->items as $item)
                         <div class="d-flex justify-content-between border-bottom py-2">
                             <div>
