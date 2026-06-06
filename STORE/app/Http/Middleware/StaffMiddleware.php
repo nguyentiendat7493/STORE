@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class AdminMiddleware
+class StaffMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
@@ -14,8 +14,8 @@ class AdminMiddleware
             return redirect()->guest('/login');
         }
 
-        if (! in_array($request->user()->role, ['super_admin', 'admin'], true)) {
-            abort(403, 'You do not have permission to access the admin area.');
+        if (! in_array($request->user()->role, ['super_admin', 'admin', 'staff'], true)) {
+            abort(403, 'Only staff can access this area.');
         }
 
         return $next($request);
