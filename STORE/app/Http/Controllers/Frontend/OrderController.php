@@ -52,7 +52,7 @@ class OrderController extends Controller
             $fromStatus,
             'cancelled',
             $request->user(),
-            'Order cancelled by customer.',
+            'Khách hàng đã hủy đơn.',
             $request->ip(),
             $request->userAgent(),
         );
