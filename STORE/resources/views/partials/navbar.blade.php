@@ -39,6 +39,7 @@
                 <li class="nav-item"><a class="nav-link" href="{{ route('products.index') }}">Sale</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('blogs.index') }}">Journal</a></li>
                 @auth
+                    @php($unreadNotifications = auth()->user()->notifications()->unread()->count())
                     <li class="nav-item d-lg-none"><a class="nav-link" href="{{ route('orders.index') }}">Đơn hàng</a></li>
                     <li class="nav-item d-lg-none"><a class="nav-link" href="{{ route('profile.index') }}">Hồ sơ</a></li>
                 @endauth
@@ -50,6 +51,12 @@
             <div class="d-flex gap-2 align-items-center">
                 @auth
                     <a class="icon-btn" href="{{ route('profile.index') }}" aria-label="Tài khoản"><i class="bi bi-person"></i></a>
+                    <a class="icon-btn position-relative" href="{{ route('notifications.index') }}" aria-label="Notifications">
+                        <i class="bi bi-bell"></i>
+                        @if ($unreadNotifications > 0)
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">{{ $unreadNotifications }}</span>
+                        @endif
+                    </a>
                     <a class="icon-btn" href="{{ route('wishlist.index') }}" aria-label="Wishlist"><i class="bi bi-heart"></i></a>
                     <a class="icon-btn" href="{{ route('cart.index') }}" aria-label="Giỏ hàng"><i class="bi bi-bag"></i></a>
                     <form action="{{ route('logout') }}" method="POST">

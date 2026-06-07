@@ -35,6 +35,9 @@
             position: sticky;
             top: 0;
             height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
         .admin-brand {
@@ -53,6 +56,33 @@
             text-decoration: none;
             border-radius: 8px;
             font-size: .92rem;
+        }
+
+        .admin-nav {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            padding-right: 6px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, .32) transparent;
+        }
+
+        .admin-nav::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .admin-nav::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .admin-nav::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, .26);
+            border-radius: 999px;
+        }
+
+        .admin-nav::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, .42);
         }
 
         .admin-nav a:hover,
@@ -130,12 +160,15 @@
             .admin-sidebar {
                 position: static;
                 height: auto;
+                overflow: visible;
             }
 
             .admin-nav {
                 display: grid;
                 grid-template-columns: repeat(2, minmax(0, 1fr));
                 gap: 4px;
+                overflow: visible;
+                padding-right: 0;
             }
 
             .admin-content,
@@ -159,6 +192,7 @@
                     ['admin.blog-categories.index', 'bi-tags', 'Blog Categories'],
                     ['admin.reviews.index', 'bi-star', 'Reviews'],
                     ['admin.wishlists.index', 'bi-heart', 'Wishlists'],
+                    ['admin.notifications.index', 'bi-bell', 'Notifications'],
                     ['admin.products.index', 'bi-bag', 'Products'],
                     ['admin.categories.index', 'bi-grid', 'Categories'],
                     ['admin.brands.index', 'bi-award', 'Brands'],

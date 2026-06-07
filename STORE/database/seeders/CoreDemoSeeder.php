@@ -11,6 +11,7 @@ use App\Models\CartItem;
 use App\Models\Category;
 use App\Models\Color;
 use App\Models\Coupon;
+use App\Models\Notification;
 use App\Models\Order;
 use App\Models\Page;
 use App\Models\PaymentMethod;
@@ -498,7 +499,46 @@ class CoreDemoSeeder extends Seeder
                         'paid_at' => null,
                     ],
                 );
+
+                Notification::updateOrCreate(
+                    [
+                        'user_id' => $customer->id,
+                        'type' => 'order',
+                        'title' => 'Order received',
+                    ],
+                    [
+                        'message' => 'Your demo order has been created and is waiting for confirmation.',
+                        'data' => ['url' => '/orders/'.$order->id],
+                        'read_at' => null,
+                    ],
+                );
             }
+
+            Notification::updateOrCreate(
+                [
+                    'user_id' => null,
+                    'type' => 'promotion',
+                    'title' => 'WELCOME10 is active',
+                ],
+                [
+                    'message' => 'Use WELCOME10 for 10% off selected wardrobe pieces.',
+                    'data' => ['url' => '/products'],
+                    'read_at' => null,
+                ],
+            );
+
+            Notification::updateOrCreate(
+                [
+                    'user_id' => $admin->id,
+                    'type' => 'system',
+                    'title' => 'CMS setup checklist',
+                ],
+                [
+                    'message' => 'Core demo data, settings, banners, pages, blog, reviews and wishlist modules are ready.',
+                    'data' => ['url' => '/admin'],
+                    'read_at' => now(),
+                ],
+            );
 
             foreach (Product::query()->take(4)->get() as $index => $product) {
                 Review::updateOrCreate(
