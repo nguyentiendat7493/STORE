@@ -55,6 +55,8 @@
                 <dl class="row mb-0">
                     <dt class="col-5">Total price</dt><dd class="col-7">{{ number_format((float) $order->total_price, 0, ',', '.') }}</dd>
                     <dt class="col-5">Discount</dt><dd class="col-7">{{ number_format((float) $order->discount_amount, 0, ',', '.') }}</dd>
+                    <dt class="col-5">Shipping method</dt><dd class="col-7">{{ $order->shipping_method_name ?? 'None' }}</dd>
+                    <dt class="col-5">Shipping fee</dt><dd class="col-7">{{ $order->display_shipping_fee }}</dd>
                     <dt class="col-5">Final price</dt><dd class="col-7 fw-bold">{{ $order->display_final_price }}</dd>
                     <dt class="col-5">Payment status</dt><dd class="col-7">{{ $order->payment?->payment_status ?? 'none' }}</dd>
                 </dl>

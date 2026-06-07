@@ -2,19 +2,29 @@
 
 namespace Database\Seeders;
 
+use App\Models\Banner;
+use App\Models\Blog;
+use App\Models\BlogCategory;
 use App\Models\Brand;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Category;
 use App\Models\Color;
 use App\Models\Coupon;
+use App\Models\Menu;
+use App\Models\MenuItem;
+use App\Models\Notification;
 use App\Models\Order;
+use App\Models\Page;
 use App\Models\PaymentMethod;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\Review;
+use App\Models\Setting;
 use App\Models\ShippingMethod;
 use App\Models\Size;
 use App\Models\User;
+use App\Models\Wishlist;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -226,31 +236,322 @@ class CoreDemoSeeder extends Seeder
                 ],
             );
 
+            if (Schema::hasTable('settings')) {
+                foreach ([
+                    ['key' => 'site_name', 'value' => 'STORE', 'type' => 'text', 'group_name' => 'general', 'is_public' => true],
+                    ['key' => 'site_email', 'value' => 'support@store.local', 'type' => 'text', 'group_name' => 'general', 'is_public' => true],
+                    ['key' => 'site_hotline', 'value' => '0900 000 000', 'type' => 'text', 'group_name' => 'general', 'is_public' => true],
+                    ['key' => 'site_address', 'value' => '12 Nguyen Hue, District 1, Ho Chi Minh City', 'type' => 'textarea', 'group_name' => 'general', 'is_public' => true],
+                    ['key' => 'footer_description', 'value' => 'Minimal fashion, editorial styling and modern ecommerce CMS controls.', 'type' => 'textarea', 'group_name' => 'footer', 'is_public' => true],
+                    ['key' => 'site_facebook', 'value' => 'https://facebook.com/store', 'type' => 'text', 'group_name' => 'social', 'is_public' => true],
+                    ['key' => 'site_instagram', 'value' => 'https://instagram.com/store', 'type' => 'text', 'group_name' => 'social', 'is_public' => true],
+                    ['key' => 'site_tiktok', 'value' => '', 'type' => 'text', 'group_name' => 'social', 'is_public' => true],
+                    ['key' => 'site_zalo', 'value' => '', 'type' => 'text', 'group_name' => 'social', 'is_public' => true],
+                    ['key' => 'primary_color', 'value' => '#111111', 'type' => 'color', 'group_name' => 'theme', 'is_public' => true],
+                    ['key' => 'accent_color', 'value' => '#D6C4A1', 'type' => 'color', 'group_name' => 'theme', 'is_public' => true],
+                    ['key' => 'default_meta_title', 'value' => 'Fashion Ecommerce CMS', 'type' => 'text', 'group_name' => 'seo', 'is_public' => true],
+                    ['key' => 'default_meta_description', 'value' => 'Premium fashion ecommerce storefront with configurable CMS settings.', 'type' => 'textarea', 'group_name' => 'seo', 'is_public' => true],
+                ] as $setting) {
+                    Setting::updateOrCreate(['key' => $setting['key']], $setting);
+                }
+            }
+
+            if (Schema::hasTable('banners')) {
+                foreach ([
+                    [
+                        'title' => 'Quiet Luxury For Every Day',
+                        'subtitle' => 'Tailored essentials, soft silhouettes and seasonless layers for the modern wardrobe.',
+                        'image' => 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=2200&q=85',
+                        'button_text' => 'Explore Collection',
+                        'button_url' => '/products',
+                        'position' => 'home_hero',
+                        'sort_order' => 1,
+                    ],
+                    [
+                        'title' => 'Soft Tailoring',
+                        'subtitle' => 'Blazers and trousers with relaxed structure.',
+                        'image' => 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1000&q=85',
+                        'button_text' => 'Shop Outerwear',
+                        'button_url' => '/products',
+                        'position' => 'home_promo',
+                        'sort_order' => 1,
+                    ],
+                    [
+                        'title' => 'The Minimal Dress',
+                        'subtitle' => 'Clean lines for day-to-evening dressing.',
+                        'image' => 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1000&q=85',
+                        'button_text' => 'Shop Dresses',
+                        'button_url' => '/products',
+                        'position' => 'home_promo',
+                        'sort_order' => 2,
+                    ],
+                    [
+                        'title' => 'Sale Edit',
+                        'subtitle' => 'Selected wardrobe pieces at reduced prices.',
+                        'image' => 'https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=1000&q=85',
+                        'button_text' => 'Shop Sale',
+                        'button_url' => '/products',
+                        'position' => 'home_promo',
+                        'sort_order' => 3,
+                    ],
+                ] as $banner) {
+                    Banner::updateOrCreate(
+                        [
+                            'position' => $banner['position'],
+                            'sort_order' => $banner['sort_order'],
+                        ],
+                        $banner + [
+                            'status' => true,
+                            'starts_at' => null,
+                            'ends_at' => null,
+                        ],
+                    );
+                }
+            }
+
+            if (Schema::hasTable('pages')) {
+                foreach ([
+                    [
+                        'title' => 'About STORE',
+                        'slug' => 'about',
+                        'excerpt' => 'A calm fashion storefront shaped around minimal design and practical CMS controls.',
+                        'content' => "STORE is a fashion ecommerce CMS built for boutique retail experiences.\n\nIt combines an editorial storefront with admin controls for products, banners, pages, settings, orders and customer management.\n\nThe project is designed to work as a graduation project, portfolio piece and reusable client foundation.",
+                        'template' => 'about',
+                    ],
+                    [
+                        'title' => 'Contact',
+                        'slug' => 'contact',
+                        'excerpt' => 'Reach the STORE team for product, order and partnership questions.',
+                        'content' => "Email: support@store.local\nHotline: 0900 000 000\nAddress: 12 Nguyen Hue, District 1, Ho Chi Minh City\n\nSupport hours: Monday to Saturday, 9:00 - 18:00.",
+                        'template' => 'contact',
+                    ],
+                    [
+                        'title' => 'Shipping Policy',
+                        'slug' => 'shipping-policy',
+                        'excerpt' => 'Domestic shipping information for orders placed through STORE.',
+                        'content' => "Standard shipping usually takes 2-4 business days.\n\nOrders above the configured free-shipping threshold may receive discounted or free delivery depending on active shipping settings.\n\nDelivery timelines can vary during promotions and holidays.",
+                        'template' => 'policy',
+                    ],
+                    [
+                        'title' => 'Return Policy',
+                        'slug' => 'return-policy',
+                        'excerpt' => 'Return and exchange guidance for eligible products.',
+                        'content' => "Products can be returned or exchanged when they are unused, unwashed and still include original tags.\n\nReturn requests should be sent within the configured return window.\n\nFinal sale items and damaged-by-use products may be excluded.",
+                        'template' => 'policy',
+                    ],
+                    [
+                        'title' => 'FAQ',
+                        'slug' => 'faq',
+                        'excerpt' => 'Common questions about shopping with STORE.',
+                        'content' => "How do I track my order?\nYou can view your orders after logging in.\n\nCan I change my shipping address?\nPlease contact support before the order enters shipping status.\n\nWhich payment methods are supported?\nThe demo supports COD, bank transfer, MoMo and VNPay-ready payment tracking.",
+                        'template' => 'faq',
+                    ],
+                ] as $page) {
+                    Page::updateOrCreate(
+                        ['slug' => $page['slug']],
+                        $page + [
+                            'meta_title' => $page['title'].' - STORE',
+                            'meta_description' => $page['excerpt'],
+                            'canonical_url' => null,
+                            'og_image' => null,
+                            'status' => 'published',
+                            'published_at' => now(),
+                        ],
+                    );
+                }
+            }
+
+            if (Schema::hasTable('blog_categories') && Schema::hasTable('blogs')) {
+                $journalCategories = collect([
+                    ['name' => 'Style Notes', 'slug' => 'style-notes', 'description' => 'Practical styling ideas for everyday dressing.'],
+                    ['name' => 'Lookbook', 'slug' => 'lookbook', 'description' => 'Editorial outfit stories and seasonal edits.'],
+                    ['name' => 'Care Guide', 'slug' => 'care-guide', 'description' => 'How to care for fabrics and wardrobe staples.'],
+                ])->mapWithKeys(fn (array $data) => [
+                    $data['slug'] => BlogCategory::updateOrCreate(
+                        ['slug' => $data['slug']],
+                        $data + ['status' => true],
+                    ),
+                ]);
+
+                foreach ([
+                    [
+                        'category' => 'style-notes',
+                        'title' => 'How to Build a Minimal Work Wardrobe',
+                        'slug' => 'minimal-work-wardrobe',
+                        'excerpt' => 'Start with sharp trousers, a quiet blazer and tops that layer easily.',
+                        'content' => "A minimal work wardrobe begins with repeatable shapes.\n\nChoose trousers with a clean line, a blazer that works open or closed, and knit tops that can layer under outerwear without bulk.\n\nKeep the palette tight: black, ivory, taupe and one seasonal accent are enough for a strong week of outfits.",
+                        'image' => 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1400&q=85',
+                    ],
+                    [
+                        'category' => 'lookbook',
+                        'title' => 'The Soft Tailoring Edit',
+                        'slug' => 'soft-tailoring-edit',
+                        'excerpt' => 'Relaxed structure, tonal layers and a little movement.',
+                        'content' => "Soft tailoring is about ease without losing shape.\n\nPair an oversized blazer with wide-leg trousers, then ground the look with a ribbed knit or silk dress.\n\nThe result feels polished but still comfortable enough for real daily movement.",
+                        'image' => 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1400&q=85',
+                    ],
+                    [
+                        'category' => 'care-guide',
+                        'title' => 'Caring for Knitwear and Delicate Fabrics',
+                        'slug' => 'care-for-knitwear-delicates',
+                        'excerpt' => 'Small care habits help your favorite pieces last longer.',
+                        'content' => "Wash delicate fabrics in cold water and avoid aggressive spin cycles.\n\nKnitwear should be dried flat to preserve shape. Store folded rather than hanging when the fabric is heavy or stretchy.\n\nA fabric shaver, garment bag and gentle detergent are simple tools that make a visible difference.",
+                        'image' => 'https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=1400&q=85',
+                    ],
+                ] as $post) {
+                    Blog::updateOrCreate(
+                        ['slug' => $post['slug']],
+                        [
+                            'blog_category_id' => $journalCategories[$post['category']]->id,
+                            'user_id' => $admin->id,
+                            'title' => $post['title'],
+                            'excerpt' => $post['excerpt'],
+                            'content' => $post['content'],
+                            'image' => $post['image'],
+                            'meta_title' => $post['title'].' - STORE Journal',
+                            'meta_description' => $post['excerpt'],
+                            'canonical_url' => null,
+                            'og_image' => $post['image'],
+                            'status' => 'published',
+                            'published_at' => now()->subDays(rand(1, 14)),
+                        ],
+                    );
+                }
+            }
+
+            if (Schema::hasTable('menus') && Schema::hasTable('menu_items')) {
+                foreach ([
+                    [
+                        'menu' => ['name' => 'Header Menu', 'slug' => 'header-menu', 'location' => 'header'],
+                        'items' => [
+                            ['title' => 'Women', 'url' => '/products?gender=female', 'sort_order' => 1],
+                            ['title' => 'Men', 'url' => '/products?gender=male', 'sort_order' => 2],
+                            ['title' => 'New Arrival', 'url' => '/products?sort=newest', 'sort_order' => 3],
+                            ['title' => 'Sale', 'url' => '/products', 'sort_order' => 4],
+                            ['title' => 'Journal', 'url' => '/journal', 'sort_order' => 5],
+                        ],
+                    ],
+                    [
+                        'menu' => ['name' => 'Footer Service Menu', 'slug' => 'footer-service-menu', 'location' => 'footer_service'],
+                        'items' => [
+                            ['title' => 'Contact', 'url' => '/pages/contact', 'sort_order' => 1],
+                            ['title' => 'Shipping', 'url' => '/pages/shipping-policy', 'sort_order' => 2],
+                            ['title' => 'Returns', 'url' => '/pages/return-policy', 'sort_order' => 3],
+                            ['title' => 'FAQ', 'url' => '/pages/faq', 'sort_order' => 4],
+                            ['title' => 'Journal', 'url' => '/journal', 'sort_order' => 5],
+                        ],
+                    ],
+                    [
+                        'menu' => ['name' => 'Footer Account Menu', 'slug' => 'footer-account-menu', 'location' => 'footer_account'],
+                        'items' => [
+                            ['title' => 'Login', 'url' => '/login', 'sort_order' => 1],
+                            ['title' => 'Register', 'url' => '/register', 'sort_order' => 2],
+                            ['title' => 'Orders', 'url' => '/orders', 'sort_order' => 3],
+                            ['title' => 'Cart', 'url' => '/cart', 'sort_order' => 4],
+                        ],
+                    ],
+                ] as $group) {
+                    $menu = Menu::updateOrCreate(
+                        ['slug' => $group['menu']['slug']],
+                        $group['menu'] + ['status' => true],
+                    );
+
+                    foreach ($group['items'] as $item) {
+                        MenuItem::updateOrCreate(
+                            [
+                                'menu_id' => $menu->id,
+                                'title' => $item['title'],
+                            ],
+                            $item + [
+                                'parent_id' => null,
+                                'target' => '_self',
+                                'status' => true,
+                            ],
+                        );
+                    }
+                }
+            }
+
             if (Schema::hasTable('shipping_methods')) {
-                ShippingMethod::updateOrCreate(
-                    ['code' => 'standard'],
+                foreach ([
                     [
                         'name' => 'Standard Shipping',
+                        'code' => 'standard',
                         'description' => 'Domestic delivery in 2-4 business days.',
                         'fee' => 30000,
                         'min_order_value' => 1500000,
-                        'status' => true,
                         'sort_order' => 1,
                     ],
-                );
+                    [
+                        'name' => 'Express Shipping',
+                        'code' => 'express',
+                        'description' => 'Priority delivery in 1-2 business days.',
+                        'fee' => 60000,
+                        'min_order_value' => 2500000,
+                        'sort_order' => 2,
+                    ],
+                    [
+                        'name' => 'Store Pickup',
+                        'code' => 'pickup',
+                        'description' => 'Pick up at the showroom after confirmation.',
+                        'fee' => 0,
+                        'min_order_value' => 0,
+                        'sort_order' => 3,
+                    ],
+                ] as $method) {
+                    ShippingMethod::updateOrCreate(
+                        ['code' => $method['code']],
+                        $method + ['status' => true],
+                    );
+                }
             }
 
             if (Schema::hasTable('payment_methods')) {
-                PaymentMethod::updateOrCreate(
-                    ['code' => 'cod'],
+                foreach ([
                     [
+                        'code' => 'cod',
                         'name' => 'Cash on Delivery',
                         'description' => 'Pay when the order arrives.',
                         'config' => [],
-                        'status' => true,
                         'sort_order' => 1,
                     ],
-                );
+                    [
+                        'code' => 'bank_transfer',
+                        'name' => 'Bank Transfer',
+                        'description' => 'Transfer to the store account after placing the order.',
+                        'config' => [
+                            'bank_name' => 'Demo Bank',
+                            'account_number' => '123456789',
+                            'account_name' => 'STORE COMPANY',
+                        ],
+                        'sort_order' => 2,
+                    ],
+                    [
+                        'code' => 'momo',
+                        'name' => 'MoMo',
+                        'description' => 'MoMo wallet payment tracking for demo orders.',
+                        'config' => [
+                            'phone' => '0900000000',
+                            'account_name' => 'STORE',
+                        ],
+                        'sort_order' => 3,
+                    ],
+                    [
+                        'code' => 'vnpay',
+                        'name' => 'VNPay',
+                        'description' => 'VNPay-ready payment method configuration.',
+                        'config' => [
+                            'terminal_code' => 'DEMO_STORE',
+                            'sandbox' => true,
+                        ],
+                        'sort_order' => 4,
+                    ],
+                ] as $method) {
+                    PaymentMethod::updateOrCreate(
+                        ['code' => $method['code']],
+                        $method + ['status' => true],
+                    );
+                }
             }
 
             $cart = Cart::firstOrCreate(['user_id' => $customer->id]);
@@ -262,6 +563,13 @@ class CoreDemoSeeder extends Seeder
                     ],
                     ['quantity' => 1],
                 );
+            }
+
+            foreach (Product::query()->take(3)->get() as $product) {
+                Wishlist::firstOrCreate([
+                    'user_id' => $customer->id,
+                    'product_id' => $product->id,
+                ]);
             }
 
             $orderVariant = $seededVariants->first();
@@ -276,6 +584,9 @@ class CoreDemoSeeder extends Seeder
                         'coupon_id' => null,
                         'customer_name' => 'Demo Customer',
                         'customer_address' => '12 Nguyen Hue, District 1, Ho Chi Minh City',
+                        'shipping_method_code' => 'standard',
+                        'shipping_method_name' => 'Standard Shipping',
+                        'shipping_fee' => 0,
                         'total_price' => $orderVariant->price,
                         'discount_amount' => 0,
                         'final_price' => $orderVariant->price,
@@ -299,6 +610,66 @@ class CoreDemoSeeder extends Seeder
                         'payment_method' => 'cod',
                         'payment_status' => 'unpaid',
                         'paid_at' => null,
+                    ],
+                );
+
+                Notification::updateOrCreate(
+                    [
+                        'user_id' => $customer->id,
+                        'type' => 'order',
+                        'title' => 'Order received',
+                    ],
+                    [
+                        'message' => 'Your demo order has been created and is waiting for confirmation.',
+                        'data' => ['url' => '/orders/'.$order->id],
+                        'read_at' => null,
+                    ],
+                );
+            }
+
+            Notification::updateOrCreate(
+                [
+                    'user_id' => null,
+                    'type' => 'promotion',
+                    'title' => 'WELCOME10 is active',
+                ],
+                [
+                    'message' => 'Use WELCOME10 for 10% off selected wardrobe pieces.',
+                    'data' => ['url' => '/products'],
+                    'read_at' => null,
+                ],
+            );
+
+            Notification::updateOrCreate(
+                [
+                    'user_id' => $admin->id,
+                    'type' => 'system',
+                    'title' => 'CMS setup checklist',
+                ],
+                [
+                    'message' => 'Core demo data, settings, banners, pages, blog, reviews and wishlist modules are ready.',
+                    'data' => ['url' => '/admin'],
+                    'read_at' => now(),
+                ],
+            );
+
+            foreach (Product::query()->take(4)->get() as $index => $product) {
+                Review::updateOrCreate(
+                    [
+                        'user_id' => $customer->id,
+                        'product_id' => $product->id,
+                    ],
+                    [
+                        'order_id' => Order::where('user_id', $customer->id)->value('id'),
+                        'rating' => [5, 5, 4, 4][$index] ?? 5,
+                        'comment' => [
+                            'The fabric feels refined and the fit is easy to style.',
+                            'A clean wardrobe piece. The color is exactly what I expected.',
+                            'Good tailoring and comfortable for all-day wear.',
+                            'Nice silhouette, especially with simple layers.',
+                        ][$index] ?? 'Great product.',
+                        'images' => null,
+                        'status' => $index === 3 ? 'pending' : 'approved',
                     ],
                 );
             }

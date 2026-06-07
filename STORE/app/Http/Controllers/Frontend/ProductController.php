@@ -57,10 +57,16 @@ class ProductController extends Controller
             'images',
             'variants.size',
             'variants.color',
+            'reviews' => fn ($query) => $query->approved()->with('user')->latest(),
         ]);
+
+        $reviewSummary = [
+            'count' => $product->reviews->count(),
+            'average' => round((float) $product->reviews->avg('rating'), 1),
+        ];
 
         $relatedProducts = $this->catalog->related($product);
 
-        return view('products.show', compact('product', 'relatedProducts'));
+        return view('products.show', compact('product', 'relatedProducts', 'reviewSummary'));
     }
 }

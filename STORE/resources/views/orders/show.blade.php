@@ -50,6 +50,8 @@
                 <div class="sidebar-box">
                     <div class="d-flex justify-content-between"><span>Tạm tính</span><span>{{ number_format((float) $order->total_price, 0, ',', '.') }} VND</span></div>
                     <div class="d-flex justify-content-between"><span>Giảm giá</span><span>{{ number_format((float) $order->discount_amount, 0, ',', '.') }} VND</span></div>
+                    <div class="d-flex justify-content-between"><span>Shipping</span><span>{{ $order->display_shipping_fee }}</span></div>
+                    <div class="small text-muted mt-1">{{ $order->shipping_method_name ?? 'No shipping method' }}</div>
                     <hr>
                     <div class="d-flex justify-content-between fs-5"><strong>Tổng</strong><strong>{{ $order->display_final_price }}</strong></div>
                     <div class="small text-muted mt-2">Thanh toán: {{ $order->payment?->payment_method }} / {{ $order->payment?->payment_status }}</div>

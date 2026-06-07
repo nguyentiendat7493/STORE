@@ -1,23 +1,40 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminBrandController;
+use App\Http\Controllers\Admin\AdminBannerController;
+use App\Http\Controllers\Admin\AdminBlogCategoryController;
+use App\Http\Controllers\Admin\AdminBlogController;
 use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminColorController;
 use App\Http\Controllers\Admin\AdminCouponController;
 use App\Http\Controllers\Admin\AdminCustomerController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminMenuController;
+use App\Http\Controllers\Admin\AdminMenuItemController;
 use App\Http\Controllers\Admin\AdminOrderController;
+use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\AdminPaymentController;
+use App\Http\Controllers\Admin\AdminPaymentMethodController;
+use App\Http\Controllers\Admin\AdminPageController;
 use App\Http\Controllers\Admin\AdminProductController;
+use App\Http\Controllers\Admin\AdminReviewController;
+use App\Http\Controllers\Admin\AdminSettingController;
+use App\Http\Controllers\Admin\AdminShippingMethodController;
 use App\Http\Controllers\Admin\AdminSizeController;
 use App\Http\Controllers\Admin\AdminVariantController;
+use App\Http\Controllers\Admin\AdminWishlistController;
 use App\Http\Controllers\Frontend\AuthController;
+use App\Http\Controllers\Frontend\BlogController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\CheckoutController;
 use App\Http\Controllers\Frontend\HomeController;
+use App\Http\Controllers\Frontend\NotificationController;
 use App\Http\Controllers\Frontend\OrderController;
+use App\Http\Controllers\Frontend\PageController;
 use App\Http\Controllers\Frontend\ProductController;
 use App\Http\Controllers\Frontend\ProfileController;
+use App\Http\Controllers\Frontend\ReviewController;
+use App\Http\Controllers\Frontend\WishlistController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -33,6 +50,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->n
 
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/journal', [BlogController::class, 'index'])->name('blogs.index');
+Route::get('/journal/{blog:slug}', [BlogController::class, 'show'])->name('blogs.show');
+Route::get('/pages/{page:slug}', [PageController::class, 'show'])->name('pages.show');
 
 Route::middleware('auth')->group(function (): void {
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -50,6 +70,14 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile/password', [ProfileController::class, 'password'])->name('profile.password');
+
+    Route::post('/products/{product}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+    Route::post('/wishlist/{product}', [WishlistController::class, 'store'])->name('wishlist.store');
+    Route::delete('/wishlist/{product}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::patch('/notifications/read-all', [NotificationController::class, 'readAll'])->name('notifications.read-all');
+    Route::patch('/notifications/{notification}/read', [NotificationController::class, 'read'])->name('notifications.read');
 });
 
 Route::prefix('admin')
@@ -57,6 +85,18 @@ Route::prefix('admin')
     ->middleware(['auth', 'staff'])
     ->group(function (): void {
         Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+        Route::get('settings', [AdminSettingController::class, 'index'])->name('settings.index');
+        Route::put('settings', [AdminSettingController::class, 'update'])->name('settings.update');
+        Route::resource('banners', AdminBannerController::class)->except('show');
+        Route::resource('pages', AdminPageController::class)->except('show');
+        Route::resource('blog-categories', AdminBlogCategoryController::class)->except('show');
+        Route::resource('blogs', AdminBlogController::class)->except('show');
+        Route::resource('menus', AdminMenuController::class)->except('show');
+        Route::get('menus/{menu}/items/create', [AdminMenuItemController::class, 'create'])->name('menu-items.create');
+        Route::post('menus/{menu}/items', [AdminMenuItemController::class, 'store'])->name('menu-items.store');
+        Route::get('menu-items/{item}/edit', [AdminMenuItemController::class, 'edit'])->name('menu-items.edit');
+        Route::put('menu-items/{item}', [AdminMenuItemController::class, 'update'])->name('menu-items.update');
+        Route::delete('menu-items/{item}', [AdminMenuItemController::class, 'destroy'])->name('menu-items.destroy');
 
         Route::resource('categories', AdminCategoryController::class)->except('show');
         Route::resource('brands', AdminBrandController::class)->except('show');
@@ -70,6 +110,11 @@ Route::prefix('admin')
         Route::patch('variants/{variant}/stock', [AdminVariantController::class, 'stock'])->name('variants.stock');
 
         Route::resource('coupons', AdminCouponController::class)->except('show');
+        Route::resource('reviews', AdminReviewController::class)->only(['index', 'show', 'update', 'destroy']);
+        Route::get('wishlists', [AdminWishlistController::class, 'index'])->name('wishlists.index');
+        Route::resource('notifications', AdminNotificationController::class)->only(['index', 'create', 'store', 'show', 'update', 'destroy']);
+        Route::resource('shipping-methods', AdminShippingMethodController::class)->except('show');
+        Route::resource('payment-methods', AdminPaymentMethodController::class)->except('show');
         Route::resource('orders', AdminOrderController::class)->only(['index', 'show']);
         Route::patch('orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.status');
 
