@@ -154,6 +154,7 @@
                     ['admin.dashboard', 'bi-speedometer2', 'Dashboard'],
                     ['admin.settings.index', 'bi-gear', 'Settings'],
                     ['admin.banners.index', 'bi-images', 'Banners'],
+                    ['admin.pages.index', 'bi-file-earmark-text', 'Pages'],
                     ['admin.products.index', 'bi-bag', 'Products'],
                     ['admin.categories.index', 'bi-grid', 'Categories'],
                     ['admin.brands.index', 'bi-award', 'Brands'],

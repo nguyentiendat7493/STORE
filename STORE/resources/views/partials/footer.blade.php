@@ -16,10 +16,10 @@
             <div class="col-6 col-lg-2">
                 <div class="eyebrow text-white mb-3">Service</div>
                 <div class="small d-grid gap-2">
-                    <a class="text-decoration-none" href="#">Contact</a>
-                    <a class="text-decoration-none" href="#">Shipping</a>
-                    <a class="text-decoration-none" href="#">Returns</a>
-                    <a class="text-decoration-none" href="#">FAQ</a>
+                    <a class="text-decoration-none" href="{{ route('pages.show', 'contact') }}">Contact</a>
+                    <a class="text-decoration-none" href="{{ route('pages.show', 'shipping-policy') }}">Shipping</a>
+                    <a class="text-decoration-none" href="{{ route('pages.show', 'return-policy') }}">Returns</a>
+                    <a class="text-decoration-none" href="{{ route('pages.show', 'faq') }}">FAQ</a>
                 </div>
             </div>
             <div class="col-6 col-lg-2">
@@ -41,7 +41,7 @@
         </div>
         <div class="border-top border-secondary mt-5 pt-3 small d-flex justify-content-between flex-column flex-md-row gap-2">
             <span>© {{ date('Y') }} {{ $siteSettings['site_name'] ?? 'STORE' }}</span>
-            <span>Privacy Policy · Return Policy · Shipping Policy</span>
+            <span><a class="text-decoration-none" href="{{ route('pages.show', 'about') }}">About</a> · <a class="text-decoration-none" href="{{ route('pages.show', 'return-policy') }}">Return Policy</a> · <a class="text-decoration-none" href="{{ route('pages.show', 'shipping-policy') }}">Shipping Policy</a></span>
         </div>
     </div>
 </footer>

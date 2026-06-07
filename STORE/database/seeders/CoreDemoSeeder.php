@@ -10,6 +10,7 @@ use App\Models\Category;
 use App\Models\Color;
 use App\Models\Coupon;
 use App\Models\Order;
+use App\Models\Page;
 use App\Models\PaymentMethod;
 use App\Models\Product;
 use App\Models\ProductVariant;
@@ -296,6 +297,58 @@ class CoreDemoSeeder extends Seeder
                             'status' => true,
                             'starts_at' => null,
                             'ends_at' => null,
+                        ],
+                    );
+                }
+            }
+
+            if (Schema::hasTable('pages')) {
+                foreach ([
+                    [
+                        'title' => 'About STORE',
+                        'slug' => 'about',
+                        'excerpt' => 'A calm fashion storefront shaped around minimal design and practical CMS controls.',
+                        'content' => "STORE is a fashion ecommerce CMS built for boutique retail experiences.\n\nIt combines an editorial storefront with admin controls for products, banners, pages, settings, orders and customer management.\n\nThe project is designed to work as a graduation project, portfolio piece and reusable client foundation.",
+                        'template' => 'about',
+                    ],
+                    [
+                        'title' => 'Contact',
+                        'slug' => 'contact',
+                        'excerpt' => 'Reach the STORE team for product, order and partnership questions.',
+                        'content' => "Email: support@store.local\nHotline: 0900 000 000\nAddress: 12 Nguyen Hue, District 1, Ho Chi Minh City\n\nSupport hours: Monday to Saturday, 9:00 - 18:00.",
+                        'template' => 'contact',
+                    ],
+                    [
+                        'title' => 'Shipping Policy',
+                        'slug' => 'shipping-policy',
+                        'excerpt' => 'Domestic shipping information for orders placed through STORE.',
+                        'content' => "Standard shipping usually takes 2-4 business days.\n\nOrders above the configured free-shipping threshold may receive discounted or free delivery depending on active shipping settings.\n\nDelivery timelines can vary during promotions and holidays.",
+                        'template' => 'policy',
+                    ],
+                    [
+                        'title' => 'Return Policy',
+                        'slug' => 'return-policy',
+                        'excerpt' => 'Return and exchange guidance for eligible products.',
+                        'content' => "Products can be returned or exchanged when they are unused, unwashed and still include original tags.\n\nReturn requests should be sent within the configured return window.\n\nFinal sale items and damaged-by-use products may be excluded.",
+                        'template' => 'policy',
+                    ],
+                    [
+                        'title' => 'FAQ',
+                        'slug' => 'faq',
+                        'excerpt' => 'Common questions about shopping with STORE.',
+                        'content' => "How do I track my order?\nYou can view your orders after logging in.\n\nCan I change my shipping address?\nPlease contact support before the order enters shipping status.\n\nWhich payment methods are supported?\nThe demo supports COD, bank transfer, MoMo and VNPay-ready payment tracking.",
+                        'template' => 'faq',
+                    ],
+                ] as $page) {
+                    Page::updateOrCreate(
+                        ['slug' => $page['slug']],
+                        $page + [
+                            'meta_title' => $page['title'].' - STORE',
+                            'meta_description' => $page['excerpt'],
+                            'canonical_url' => null,
+                            'og_image' => null,
+                            'status' => 'published',
+                            'published_at' => now(),
                         ],
                     );
                 }
