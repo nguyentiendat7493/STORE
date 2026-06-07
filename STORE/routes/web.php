@@ -9,6 +9,8 @@ use App\Http\Controllers\Admin\AdminColorController;
 use App\Http\Controllers\Admin\AdminCouponController;
 use App\Http\Controllers\Admin\AdminCustomerController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminMenuController;
+use App\Http\Controllers\Admin\AdminMenuItemController;
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\AdminPaymentController;
@@ -87,6 +89,12 @@ Route::prefix('admin')
         Route::resource('pages', AdminPageController::class)->except('show');
         Route::resource('blog-categories', AdminBlogCategoryController::class)->except('show');
         Route::resource('blogs', AdminBlogController::class)->except('show');
+        Route::resource('menus', AdminMenuController::class)->except('show');
+        Route::get('menus/{menu}/items/create', [AdminMenuItemController::class, 'create'])->name('menu-items.create');
+        Route::post('menus/{menu}/items', [AdminMenuItemController::class, 'store'])->name('menu-items.store');
+        Route::get('menu-items/{item}/edit', [AdminMenuItemController::class, 'edit'])->name('menu-items.edit');
+        Route::put('menu-items/{item}', [AdminMenuItemController::class, 'update'])->name('menu-items.update');
+        Route::delete('menu-items/{item}', [AdminMenuItemController::class, 'destroy'])->name('menu-items.destroy');
 
         Route::resource('categories', AdminCategoryController::class)->except('show');
         Route::resource('brands', AdminBrandController::class)->except('show');

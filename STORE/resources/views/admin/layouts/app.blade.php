@@ -193,6 +193,7 @@
                     ['admin.reviews.index', 'bi-star', 'Reviews'],
                     ['admin.wishlists.index', 'bi-heart', 'Wishlists'],
                     ['admin.notifications.index', 'bi-bell', 'Notifications'],
+                    ['admin.menus.index', 'bi-list-nested', 'Menus'],
                     ['admin.products.index', 'bi-bag', 'Products'],
                     ['admin.categories.index', 'bi-grid', 'Categories'],
                     ['admin.brands.index', 'bi-award', 'Brands'],

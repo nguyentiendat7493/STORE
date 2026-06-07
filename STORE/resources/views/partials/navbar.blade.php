@@ -6,8 +6,23 @@
         <a class="navbar-brand brand-mark position-lg-absolute start-50 translate-lg-middle-x mx-lg-auto" href="{{ route('home') }}">{{ $siteSettings['site_name'] ?? 'STORE' }}</a>
         <div class="collapse navbar-collapse" id="mainNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item"><a class="nav-link" href="{{ route('products.index', ['gender' => 'female']) }}">Women</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('products.index', ['gender' => 'male']) }}">Men</a></li>
+                @forelse (($siteMenus['header']?->items ?? collect()) as $menuItem)
+                    @if ($menuItem->children->isNotEmpty())
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="{{ $menuItem->url }}" target="{{ $menuItem->target }}" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{ $menuItem->title }}</a>
+                            <ul class="dropdown-menu rounded-0">
+                                @foreach ($menuItem->children as $child)
+                                    <li><a class="dropdown-item" href="{{ $child->url }}" target="{{ $child->target }}">{{ $child->title }}</a></li>
+                                @endforeach
+                            </ul>
+                        </li>
+                    @else
+                        <li class="nav-item"><a class="nav-link" href="{{ $menuItem->url }}" target="{{ $menuItem->target }}">{{ $menuItem->title }}</a></li>
+                    @endif
+                @empty
+                    <li class="nav-item"><a class="nav-link" href="{{ route('products.index', ['gender' => 'female']) }}">Women</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('products.index', ['gender' => 'male']) }}">Men</a></li>
+                @endforelse
                 <li class="nav-item dropdown position-static">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Collection</a>
                     <div class="dropdown-menu w-100 mt-0 rounded-0 border-0 p-0">
@@ -35,9 +50,11 @@
                         </div>
                     </div>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('products.index', ['sort' => 'newest']) }}">New Arrival</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('products.index') }}">Sale</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('blogs.index') }}">Journal</a></li>
+                @if (($siteMenus['header']?->items ?? collect())->isEmpty())
+                    <li class="nav-item"><a class="nav-link" href="{{ route('products.index', ['sort' => 'newest']) }}">New Arrival</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('products.index') }}">Sale</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('blogs.index') }}">Journal</a></li>
+                @endif
                 @auth
                     @php($unreadNotifications = auth()->user()->notifications()->unread()->count())
                     <li class="nav-item d-lg-none"><a class="nav-link" href="{{ route('orders.index') }}">Đơn hàng</a></li>

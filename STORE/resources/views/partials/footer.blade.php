@@ -16,20 +16,28 @@
             <div class="col-6 col-lg-2">
                 <div class="eyebrow text-white mb-3">Service</div>
                 <div class="small d-grid gap-2">
-                    <a class="text-decoration-none" href="{{ route('pages.show', 'contact') }}">Contact</a>
-                    <a class="text-decoration-none" href="{{ route('pages.show', 'shipping-policy') }}">Shipping</a>
-                    <a class="text-decoration-none" href="{{ route('pages.show', 'return-policy') }}">Returns</a>
-                    <a class="text-decoration-none" href="{{ route('pages.show', 'faq') }}">FAQ</a>
-                    <a class="text-decoration-none" href="{{ route('blogs.index') }}">Journal</a>
+                    @forelse (($siteMenus['footer_service']?->items ?? collect()) as $menuItem)
+                        <a class="text-decoration-none" href="{{ $menuItem->url }}" target="{{ $menuItem->target }}">{{ $menuItem->title }}</a>
+                    @empty
+                        <a class="text-decoration-none" href="{{ route('pages.show', 'contact') }}">Contact</a>
+                        <a class="text-decoration-none" href="{{ route('pages.show', 'shipping-policy') }}">Shipping</a>
+                        <a class="text-decoration-none" href="{{ route('pages.show', 'return-policy') }}">Returns</a>
+                        <a class="text-decoration-none" href="{{ route('pages.show', 'faq') }}">FAQ</a>
+                        <a class="text-decoration-none" href="{{ route('blogs.index') }}">Journal</a>
+                    @endforelse
                 </div>
             </div>
             <div class="col-6 col-lg-2">
                 <div class="eyebrow text-white mb-3">Account</div>
                 <div class="small d-grid gap-2">
-                    <a class="text-decoration-none" href="{{ route('login') }}">Login</a>
-                    <a class="text-decoration-none" href="{{ route('register') }}">Register</a>
-                    <a class="text-decoration-none" href="{{ route('orders.index') }}">Orders</a>
-                    <a class="text-decoration-none" href="{{ route('cart.index') }}">Cart</a>
+                    @forelse (($siteMenus['footer_account']?->items ?? collect()) as $menuItem)
+                        <a class="text-decoration-none" href="{{ $menuItem->url }}" target="{{ $menuItem->target }}">{{ $menuItem->title }}</a>
+                    @empty
+                        <a class="text-decoration-none" href="{{ route('login') }}">Login</a>
+                        <a class="text-decoration-none" href="{{ route('register') }}">Register</a>
+                        <a class="text-decoration-none" href="{{ route('orders.index') }}">Orders</a>
+                        <a class="text-decoration-none" href="{{ route('cart.index') }}">Cart</a>
+                    @endforelse
                 </div>
             </div>
             <div class="col-lg-3">

@@ -11,6 +11,8 @@ use App\Models\CartItem;
 use App\Models\Category;
 use App\Models\Color;
 use App\Models\Coupon;
+use App\Models\Menu;
+use App\Models\MenuItem;
 use App\Models\Notification;
 use App\Models\Order;
 use App\Models\Page;
@@ -414,6 +416,59 @@ class CoreDemoSeeder extends Seeder
                             'published_at' => now()->subDays(rand(1, 14)),
                         ],
                     );
+                }
+            }
+
+            if (Schema::hasTable('menus') && Schema::hasTable('menu_items')) {
+                foreach ([
+                    [
+                        'menu' => ['name' => 'Header Menu', 'slug' => 'header-menu', 'location' => 'header'],
+                        'items' => [
+                            ['title' => 'Women', 'url' => '/products?gender=female', 'sort_order' => 1],
+                            ['title' => 'Men', 'url' => '/products?gender=male', 'sort_order' => 2],
+                            ['title' => 'New Arrival', 'url' => '/products?sort=newest', 'sort_order' => 3],
+                            ['title' => 'Sale', 'url' => '/products', 'sort_order' => 4],
+                            ['title' => 'Journal', 'url' => '/journal', 'sort_order' => 5],
+                        ],
+                    ],
+                    [
+                        'menu' => ['name' => 'Footer Service Menu', 'slug' => 'footer-service-menu', 'location' => 'footer_service'],
+                        'items' => [
+                            ['title' => 'Contact', 'url' => '/pages/contact', 'sort_order' => 1],
+                            ['title' => 'Shipping', 'url' => '/pages/shipping-policy', 'sort_order' => 2],
+                            ['title' => 'Returns', 'url' => '/pages/return-policy', 'sort_order' => 3],
+                            ['title' => 'FAQ', 'url' => '/pages/faq', 'sort_order' => 4],
+                            ['title' => 'Journal', 'url' => '/journal', 'sort_order' => 5],
+                        ],
+                    ],
+                    [
+                        'menu' => ['name' => 'Footer Account Menu', 'slug' => 'footer-account-menu', 'location' => 'footer_account'],
+                        'items' => [
+                            ['title' => 'Login', 'url' => '/login', 'sort_order' => 1],
+                            ['title' => 'Register', 'url' => '/register', 'sort_order' => 2],
+                            ['title' => 'Orders', 'url' => '/orders', 'sort_order' => 3],
+                            ['title' => 'Cart', 'url' => '/cart', 'sort_order' => 4],
+                        ],
+                    ],
+                ] as $group) {
+                    $menu = Menu::updateOrCreate(
+                        ['slug' => $group['menu']['slug']],
+                        $group['menu'] + ['status' => true],
+                    );
+
+                    foreach ($group['items'] as $item) {
+                        MenuItem::updateOrCreate(
+                            [
+                                'menu_id' => $menu->id,
+                                'title' => $item['title'],
+                            ],
+                            $item + [
+                                'parent_id' => null,
+                                'target' => '_self',
+                                'status' => true,
+                            ],
+                        );
+                    }
                 }
             }
 
