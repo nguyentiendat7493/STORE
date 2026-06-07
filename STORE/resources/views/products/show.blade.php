@@ -70,6 +70,56 @@
         </div>
 
         <section class="section-band">
+            <div class="row g-4 align-items-start">
+                <div class="col-lg-5">
+                    <div class="eyebrow mb-2">Customer Reviews</div>
+                    <h2 class="section-title mb-3">What shoppers say</h2>
+                    <div class="fs-4 mb-2">
+                        <span class="text-warning">{{ str_repeat('★', (int) round($reviewSummary['average'])) }}</span><span class="text-muted">{{ str_repeat('☆', 5 - (int) round($reviewSummary['average'])) }}</span>
+                    </div>
+                    <p class="section-kicker">{{ $reviewSummary['count'] }} approved reviews · Average {{ number_format($reviewSummary['average'], 1) }}/5</p>
+
+                    @auth
+                        <form class="sidebar-box mt-4" method="POST" action="{{ route('reviews.store', $product) }}">
+                            @csrf
+                            <label class="form-label">Your rating</label>
+                            <select class="form-select mb-3" name="rating" required>
+                                @for ($rating = 5; $rating >= 1; $rating--)
+                                    <option value="{{ $rating }}">{{ $rating }} stars</option>
+                                @endfor
+                            </select>
+                            <label class="form-label">Your review</label>
+                            <textarea class="form-control mb-3" name="comment" rows="4" placeholder="Share fit, fabric, styling notes or delivery feedback.">{{ old('comment') }}</textarea>
+                            <button class="btn btn-primary w-100" type="submit">Submit Review</button>
+                            <div class="form-text mt-2">Reviews appear after admin approval.</div>
+                        </form>
+                    @else
+                        <a class="btn btn-outline-dark mt-3" href="{{ route('login') }}">Login to review</a>
+                    @endauth
+                </div>
+
+                <div class="col-lg-7">
+                    <div class="d-grid gap-3">
+                        @forelse ($product->reviews as $review)
+                            <article class="editorial-card p-4">
+                                <div class="d-flex justify-content-between gap-3 mb-2">
+                                    <div>
+                                        <div class="fw-semibold">{{ $review->user?->name }}</div>
+                                        <div class="text-muted small">{{ $review->created_at?->format('Y-m-d') }}</div>
+                                    </div>
+                                    <div class="text-warning">{{ str_repeat('★', $review->rating) }}<span class="text-muted">{{ str_repeat('☆', 5 - $review->rating) }}</span></div>
+                                </div>
+                                <p class="mb-0">{{ $review->comment }}</p>
+                            </article>
+                        @empty
+                            <div class="empty-state">No approved reviews yet.</div>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-band">
             <div class="eyebrow mb-2">You may also like</div>
             <h2 class="section-title mb-4">Sản phẩm liên quan</h2>
             <div class="row g-4">

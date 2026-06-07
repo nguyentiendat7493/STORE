@@ -16,6 +16,7 @@ use App\Models\Page;
 use App\Models\PaymentMethod;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\Review;
 use App\Models\Setting;
 use App\Models\ShippingMethod;
 use App\Models\Size;
@@ -487,6 +488,27 @@ class CoreDemoSeeder extends Seeder
                         'payment_method' => 'cod',
                         'payment_status' => 'unpaid',
                         'paid_at' => null,
+                    ],
+                );
+            }
+
+            foreach (Product::query()->take(4)->get() as $index => $product) {
+                Review::updateOrCreate(
+                    [
+                        'user_id' => $customer->id,
+                        'product_id' => $product->id,
+                    ],
+                    [
+                        'order_id' => Order::where('user_id', $customer->id)->value('id'),
+                        'rating' => [5, 5, 4, 4][$index] ?? 5,
+                        'comment' => [
+                            'The fabric feels refined and the fit is easy to style.',
+                            'A clean wardrobe piece. The color is exactly what I expected.',
+                            'Good tailoring and comfortable for all-day wear.',
+                            'Nice silhouette, especially with simple layers.',
+                        ][$index] ?? 'Great product.',
+                        'images' => null,
+                        'status' => $index === 3 ? 'pending' : 'approved',
                     ],
                 );
             }

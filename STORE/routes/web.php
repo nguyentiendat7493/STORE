@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminPaymentController;
 use App\Http\Controllers\Admin\AdminPageController;
 use App\Http\Controllers\Admin\AdminProductController;
+use App\Http\Controllers\Admin\AdminReviewController;
 use App\Http\Controllers\Admin\AdminSettingController;
 use App\Http\Controllers\Admin\AdminSizeController;
 use App\Http\Controllers\Admin\AdminVariantController;
@@ -25,6 +26,7 @@ use App\Http\Controllers\Frontend\OrderController;
 use App\Http\Controllers\Frontend\PageController;
 use App\Http\Controllers\Frontend\ProductController;
 use App\Http\Controllers\Frontend\ProfileController;
+use App\Http\Controllers\Frontend\ReviewController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -60,6 +62,8 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile/password', [ProfileController::class, 'password'])->name('profile.password');
+
+    Route::post('/products/{product}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
 });
 
 Route::prefix('admin')
@@ -86,6 +90,7 @@ Route::prefix('admin')
         Route::patch('variants/{variant}/stock', [AdminVariantController::class, 'stock'])->name('variants.stock');
 
         Route::resource('coupons', AdminCouponController::class)->except('show');
+        Route::resource('reviews', AdminReviewController::class)->only(['index', 'show', 'update', 'destroy']);
         Route::resource('orders', AdminOrderController::class)->only(['index', 'show']);
         Route::patch('orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.status');
 

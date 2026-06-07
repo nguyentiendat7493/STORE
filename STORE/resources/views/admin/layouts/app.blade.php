@@ -157,6 +157,7 @@
                     ['admin.pages.index', 'bi-file-earmark-text', 'Pages'],
                     ['admin.blogs.index', 'bi-journal-text', 'Blogs'],
                     ['admin.blog-categories.index', 'bi-tags', 'Blog Categories'],
+                    ['admin.reviews.index', 'bi-star', 'Reviews'],
                     ['admin.products.index', 'bi-bag', 'Products'],
                     ['admin.categories.index', 'bi-grid', 'Categories'],
                     ['admin.brands.index', 'bi-award', 'Brands'],
