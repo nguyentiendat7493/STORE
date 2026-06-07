@@ -20,6 +20,7 @@
                     <a class="text-decoration-none" href="{{ route('pages.show', 'shipping-policy') }}">Shipping</a>
                     <a class="text-decoration-none" href="{{ route('pages.show', 'return-policy') }}">Returns</a>
                     <a class="text-decoration-none" href="{{ route('pages.show', 'faq') }}">FAQ</a>
+                    <a class="text-decoration-none" href="{{ route('blogs.index') }}">Journal</a>
                 </div>
             </div>
             <div class="col-6 col-lg-2">

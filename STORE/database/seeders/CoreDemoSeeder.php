@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Banner;
+use App\Models\Blog;
+use App\Models\BlogCategory;
 use App\Models\Brand;
 use App\Models\Cart;
 use App\Models\CartItem;
@@ -349,6 +351,64 @@ class CoreDemoSeeder extends Seeder
                             'og_image' => null,
                             'status' => 'published',
                             'published_at' => now(),
+                        ],
+                    );
+                }
+            }
+
+            if (Schema::hasTable('blog_categories') && Schema::hasTable('blogs')) {
+                $journalCategories = collect([
+                    ['name' => 'Style Notes', 'slug' => 'style-notes', 'description' => 'Practical styling ideas for everyday dressing.'],
+                    ['name' => 'Lookbook', 'slug' => 'lookbook', 'description' => 'Editorial outfit stories and seasonal edits.'],
+                    ['name' => 'Care Guide', 'slug' => 'care-guide', 'description' => 'How to care for fabrics and wardrobe staples.'],
+                ])->mapWithKeys(fn (array $data) => [
+                    $data['slug'] => BlogCategory::updateOrCreate(
+                        ['slug' => $data['slug']],
+                        $data + ['status' => true],
+                    ),
+                ]);
+
+                foreach ([
+                    [
+                        'category' => 'style-notes',
+                        'title' => 'How to Build a Minimal Work Wardrobe',
+                        'slug' => 'minimal-work-wardrobe',
+                        'excerpt' => 'Start with sharp trousers, a quiet blazer and tops that layer easily.',
+                        'content' => "A minimal work wardrobe begins with repeatable shapes.\n\nChoose trousers with a clean line, a blazer that works open or closed, and knit tops that can layer under outerwear without bulk.\n\nKeep the palette tight: black, ivory, taupe and one seasonal accent are enough for a strong week of outfits.",
+                        'image' => 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1400&q=85',
+                    ],
+                    [
+                        'category' => 'lookbook',
+                        'title' => 'The Soft Tailoring Edit',
+                        'slug' => 'soft-tailoring-edit',
+                        'excerpt' => 'Relaxed structure, tonal layers and a little movement.',
+                        'content' => "Soft tailoring is about ease without losing shape.\n\nPair an oversized blazer with wide-leg trousers, then ground the look with a ribbed knit or silk dress.\n\nThe result feels polished but still comfortable enough for real daily movement.",
+                        'image' => 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1400&q=85',
+                    ],
+                    [
+                        'category' => 'care-guide',
+                        'title' => 'Caring for Knitwear and Delicate Fabrics',
+                        'slug' => 'care-for-knitwear-delicates',
+                        'excerpt' => 'Small care habits help your favorite pieces last longer.',
+                        'content' => "Wash delicate fabrics in cold water and avoid aggressive spin cycles.\n\nKnitwear should be dried flat to preserve shape. Store folded rather than hanging when the fabric is heavy or stretchy.\n\nA fabric shaver, garment bag and gentle detergent are simple tools that make a visible difference.",
+                        'image' => 'https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=1400&q=85',
+                    ],
+                ] as $post) {
+                    Blog::updateOrCreate(
+                        ['slug' => $post['slug']],
+                        [
+                            'blog_category_id' => $journalCategories[$post['category']]->id,
+                            'user_id' => $admin->id,
+                            'title' => $post['title'],
+                            'excerpt' => $post['excerpt'],
+                            'content' => $post['content'],
+                            'image' => $post['image'],
+                            'meta_title' => $post['title'].' - STORE Journal',
+                            'meta_description' => $post['excerpt'],
+                            'canonical_url' => null,
+                            'og_image' => $post['image'],
+                            'status' => 'published',
+                            'published_at' => now()->subDays(rand(1, 14)),
                         ],
                     );
                 }

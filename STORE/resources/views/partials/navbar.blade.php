@@ -37,6 +37,7 @@
                 </li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('products.index', ['sort' => 'newest']) }}">New Arrival</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('products.index') }}">Sale</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('blogs.index') }}">Journal</a></li>
                 @auth
                     <li class="nav-item d-lg-none"><a class="nav-link" href="{{ route('orders.index') }}">Đơn hàng</a></li>
                     <li class="nav-item d-lg-none"><a class="nav-link" href="{{ route('profile.index') }}">Hồ sơ</a></li>

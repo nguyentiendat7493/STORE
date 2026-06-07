@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\AdminBrandController;
 use App\Http\Controllers\Admin\AdminBannerController;
+use App\Http\Controllers\Admin\AdminBlogCategoryController;
+use App\Http\Controllers\Admin\AdminBlogController;
 use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminColorController;
 use App\Http\Controllers\Admin\AdminCouponController;
@@ -15,6 +17,7 @@ use App\Http\Controllers\Admin\AdminSettingController;
 use App\Http\Controllers\Admin\AdminSizeController;
 use App\Http\Controllers\Admin\AdminVariantController;
 use App\Http\Controllers\Frontend\AuthController;
+use App\Http\Controllers\Frontend\BlogController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\CheckoutController;
 use App\Http\Controllers\Frontend\HomeController;
@@ -37,6 +40,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->n
 
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/journal', [BlogController::class, 'index'])->name('blogs.index');
+Route::get('/journal/{blog:slug}', [BlogController::class, 'show'])->name('blogs.show');
 Route::get('/pages/{page:slug}', [PageController::class, 'show'])->name('pages.show');
 
 Route::middleware('auth')->group(function (): void {
@@ -66,6 +71,8 @@ Route::prefix('admin')
         Route::put('settings', [AdminSettingController::class, 'update'])->name('settings.update');
         Route::resource('banners', AdminBannerController::class)->except('show');
         Route::resource('pages', AdminPageController::class)->except('show');
+        Route::resource('blog-categories', AdminBlogCategoryController::class)->except('show');
+        Route::resource('blogs', AdminBlogController::class)->except('show');
 
         Route::resource('categories', AdminCategoryController::class)->except('show');
         Route::resource('brands', AdminBrandController::class)->except('show');
