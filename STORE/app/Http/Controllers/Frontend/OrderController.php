@@ -27,7 +27,7 @@ class OrderController extends Controller
     {
         $this->authorizeOrder($order);
 
-        $order->load('details.productVariant.product.images', 'payment', 'coupon');
+        $order->load('details.productVariant.product.images', 'payment', 'coupon', 'statusHistories.user');
 
         return view('orders.show', compact('order'));
     }
@@ -46,7 +46,16 @@ class OrderController extends Controller
             $detail->productVariant?->increment('stock', $detail->quantity);
         }
 
+        $fromStatus = $order->status;
         $order->update(['status' => 'cancelled']);
+        $order->addStatusHistory(
+            $fromStatus,
+            'cancelled',
+            $request->user(),
+            'Order cancelled by customer.',
+            $request->ip(),
+            $request->userAgent(),
+        );
 
         return back()->with('success', 'Đã hủy đơn hàng.');
     }

@@ -15,6 +15,7 @@ use App\Models\Menu;
 use App\Models\MenuItem;
 use App\Models\Notification;
 use App\Models\Order;
+use App\Models\OrderStatusHistory;
 use App\Models\Page;
 use App\Models\PaymentMethod;
 use App\Models\Product;
@@ -24,6 +25,7 @@ use App\Models\Setting;
 use App\Models\ShippingMethod;
 use App\Models\Size;
 use App\Models\User;
+use App\Models\UserAddress;
 use App\Models\Wishlist;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -55,6 +57,44 @@ class CoreDemoSeeder extends Seeder
                     'role' => 'customer',
                 ],
             );
+
+            if (Schema::hasTable('user_addresses')) {
+                UserAddress::updateOrCreate(
+                    [
+                        'user_id' => $customer->id,
+                        'label' => 'Home',
+                    ],
+                    [
+                        'recipient_name' => 'Demo Customer',
+                        'phone' => '0901234567',
+                        'address_line' => '12 Nguyen Hue',
+                        'ward' => 'Ben Nghe Ward',
+                        'district' => 'District 1',
+                        'city' => 'Ho Chi Minh City',
+                        'country' => 'Vietnam',
+                        'postal_code' => null,
+                        'is_default' => true,
+                    ],
+                );
+
+                UserAddress::updateOrCreate(
+                    [
+                        'user_id' => $customer->id,
+                        'label' => 'Office',
+                    ],
+                    [
+                        'recipient_name' => 'Demo Customer',
+                        'phone' => '0901234567',
+                        'address_line' => '88 Le Loi',
+                        'ward' => 'Ben Thanh Ward',
+                        'district' => 'District 1',
+                        'city' => 'Ho Chi Minh City',
+                        'country' => 'Vietnam',
+                        'postal_code' => null,
+                        'is_default' => false,
+                    ],
+                );
+            }
 
             $categories = collect([
                 ['name' => 'Dresses', 'slug' => 'dresses', 'description' => 'Editorial dresses for daily and evening styling.'],
@@ -612,6 +652,23 @@ class CoreDemoSeeder extends Seeder
                         'paid_at' => null,
                     ],
                 );
+
+                if (Schema::hasTable('order_status_histories')) {
+                    OrderStatusHistory::firstOrCreate(
+                        [
+                            'order_id' => $order->id,
+                            'from_status' => null,
+                            'to_status' => 'pending',
+                        ],
+                        [
+                            'user_id' => $customer->id,
+                            'note' => 'Demo order created.',
+                            'changed_by_name' => $customer->name,
+                            'ip_address' => null,
+                            'user_agent' => null,
+                        ],
+                    );
+                }
 
                 Notification::updateOrCreate(
                     [

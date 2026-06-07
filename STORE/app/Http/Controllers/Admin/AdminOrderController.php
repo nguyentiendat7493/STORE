@@ -24,7 +24,7 @@ class AdminOrderController extends Controller
 
     public function show(Order $order): View
     {
-        $order->load(['user', 'coupon', 'details.productVariant.product', 'payment']);
+        $order->load(['user', 'coupon', 'details.productVariant.product', 'payment', 'statusHistories.user']);
 
         return view('admin.orders.show', compact('order'));
     }
@@ -33,11 +33,26 @@ class AdminOrderController extends Controller
     {
         $data = $request->validate([
             'status' => ['required', 'in:pending,confirmed,shipping,completed,cancelled'],
+            'note' => ['nullable', 'string', 'max:1000'],
         ]);
 
-        $order->update($data);
+        $fromStatus = $order->status;
+        $toStatus = $data['status'];
 
-        if ($data['status'] === 'completed') {
+        if ($fromStatus !== $toStatus) {
+            $order->update(['status' => $toStatus]);
+
+            $order->addStatusHistory(
+                $fromStatus,
+                $toStatus,
+                $request->user(),
+                $data['note'] ?? null,
+                $request->ip(),
+                $request->userAgent(),
+            );
+        }
+
+        if ($toStatus === 'completed') {
             $order->payment?->update(['payment_status' => 'paid', 'paid_at' => now()]);
         }
 
