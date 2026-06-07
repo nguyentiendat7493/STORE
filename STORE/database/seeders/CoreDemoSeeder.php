@@ -21,6 +21,7 @@ use App\Models\Setting;
 use App\Models\ShippingMethod;
 use App\Models\Size;
 use App\Models\User;
+use App\Models\Wishlist;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -451,6 +452,13 @@ class CoreDemoSeeder extends Seeder
                     ],
                     ['quantity' => 1],
                 );
+            }
+
+            foreach (Product::query()->take(3)->get() as $product) {
+                Wishlist::firstOrCreate([
+                    'user_id' => $customer->id,
+                    'product_id' => $product->id,
+                ]);
             }
 
             $orderVariant = $seededVariants->first();

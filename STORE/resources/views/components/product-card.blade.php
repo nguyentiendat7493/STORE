@@ -23,5 +23,11 @@
                 <span class="old-price ms-2">{{ number_format((float) $product->price, 0, ',', '.') }} VND</span>
             @endif
         </div>
+        @auth
+            <form class="mt-3" method="POST" action="{{ route('wishlist.store', $product) }}">
+                @csrf
+                <button class="btn btn-outline-dark w-100" type="submit"><i class="bi bi-heart me-1"></i> Wishlist</button>
+            </form>
+        @endauth
     </div>
 </div>

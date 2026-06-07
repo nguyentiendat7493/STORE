@@ -48,7 +48,7 @@
                             <input class="form-control mb-3" type="number" name="quantity" min="1" value="1">
                             <div class="d-grid gap-2">
                                 <button class="btn btn-primary" type="submit" @disabled($product->variants->sum('stock') <= 0)>Thêm vào giỏ</button>
-                                <button class="btn btn-outline-dark" type="button">Yêu thích</button>
+                                <button class="btn btn-outline-dark" type="submit" formaction="{{ route('wishlist.store', $product) }}">Wishlist</button>
                             </div>
                         </form>
                     @else

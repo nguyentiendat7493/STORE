@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\AdminReviewController;
 use App\Http\Controllers\Admin\AdminSettingController;
 use App\Http\Controllers\Admin\AdminSizeController;
 use App\Http\Controllers\Admin\AdminVariantController;
+use App\Http\Controllers\Admin\AdminWishlistController;
 use App\Http\Controllers\Frontend\AuthController;
 use App\Http\Controllers\Frontend\BlogController;
 use App\Http\Controllers\Frontend\CartController;
@@ -27,6 +28,7 @@ use App\Http\Controllers\Frontend\PageController;
 use App\Http\Controllers\Frontend\ProductController;
 use App\Http\Controllers\Frontend\ProfileController;
 use App\Http\Controllers\Frontend\ReviewController;
+use App\Http\Controllers\Frontend\WishlistController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -64,6 +66,9 @@ Route::middleware('auth')->group(function (): void {
     Route::put('/profile/password', [ProfileController::class, 'password'])->name('profile.password');
 
     Route::post('/products/{product}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+    Route::post('/wishlist/{product}', [WishlistController::class, 'store'])->name('wishlist.store');
+    Route::delete('/wishlist/{product}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');
 });
 
 Route::prefix('admin')
@@ -91,6 +96,7 @@ Route::prefix('admin')
 
         Route::resource('coupons', AdminCouponController::class)->except('show');
         Route::resource('reviews', AdminReviewController::class)->only(['index', 'show', 'update', 'destroy']);
+        Route::get('wishlists', [AdminWishlistController::class, 'index'])->name('wishlists.index');
         Route::resource('orders', AdminOrderController::class)->only(['index', 'show']);
         Route::patch('orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.status');
 

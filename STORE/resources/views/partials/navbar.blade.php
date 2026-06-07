@@ -50,7 +50,7 @@
             <div class="d-flex gap-2 align-items-center">
                 @auth
                     <a class="icon-btn" href="{{ route('profile.index') }}" aria-label="Tài khoản"><i class="bi bi-person"></i></a>
-                    <a class="icon-btn" href="#" aria-label="Yêu thích"><i class="bi bi-heart"></i></a>
+                    <a class="icon-btn" href="{{ route('wishlist.index') }}" aria-label="Wishlist"><i class="bi bi-heart"></i></a>
                     <a class="icon-btn" href="{{ route('cart.index') }}" aria-label="Giỏ hàng"><i class="bi bi-bag"></i></a>
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
@@ -58,7 +58,7 @@
                     </form>
                 @else
                     <a class="icon-btn" href="{{ route('login') }}" aria-label="Đăng nhập"><i class="bi bi-person"></i></a>
-                    <a class="icon-btn" href="#" aria-label="Yêu thích"><i class="bi bi-heart"></i></a>
+                    <a class="icon-btn" href="{{ route('login') }}" aria-label="Wishlist"><i class="bi bi-heart"></i></a>
                     <a class="icon-btn" href="{{ route('login') }}" aria-label="Giỏ hàng"><i class="bi bi-bag"></i></a>
                 @endauth
             </div>
