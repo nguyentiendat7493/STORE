@@ -54,6 +54,24 @@ class Order extends Model
         return $this->hasOne(Payment::class);
     }
 
+    public function statusHistories(): HasMany
+    {
+        return $this->hasMany(OrderStatusHistory::class)->latest();
+    }
+
+    public function addStatusHistory(?string $fromStatus, string $toStatus, ?User $actor = null, ?string $note = null, ?string $ipAddress = null, ?string $userAgent = null): OrderStatusHistory
+    {
+        return $this->statusHistories()->create([
+            'user_id' => $actor?->id,
+            'from_status' => $fromStatus,
+            'to_status' => $toStatus,
+            'note' => $note,
+            'changed_by_name' => $actor?->name,
+            'ip_address' => $ipAddress,
+            'user_agent' => $userAgent,
+        ]);
+    }
+
     public function scopeStatus($query, ?string $status)
     {
         return $query->when($status, fn ($query) => $query->where('status', $status));

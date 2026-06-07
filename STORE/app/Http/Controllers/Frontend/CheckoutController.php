@@ -10,6 +10,7 @@ use App\Models\Order;
 use App\Models\PaymentMethod;
 use App\Models\ProductVariant;
 use App\Models\ShippingMethod;
+use App\Models\UserAddress;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -32,8 +33,9 @@ class CheckoutController extends Controller
         $paymentMethods = PaymentMethod::active()
             ->whereIn('code', ['cod', 'bank_transfer', 'momo', 'vnpay'])
             ->get();
+        $addresses = Auth::user()->addresses()->defaultFirst()->get();
 
-        return view('checkout.index', compact('cart', 'shippingMethods', 'paymentMethods'));
+        return view('checkout.index', compact('cart', 'shippingMethods', 'paymentMethods', 'addresses'));
     }
 
     public function store(CheckoutRequest $request): RedirectResponse
@@ -48,7 +50,7 @@ class CheckoutController extends Controller
         }
 
         try {
-            $order = DB::transaction(function () use ($cart, $data) {
+            $order = DB::transaction(function () use ($cart, $data, $request) {
                 $total = 0;
 
                 foreach ($cart->items as $item) {
@@ -62,6 +64,7 @@ class CheckoutController extends Controller
                 }
 
                 $coupon = $this->findActiveCoupon($data['coupon_code'] ?? null);
+                $selectedAddress = $this->findUserAddress($data['address_id'] ?? null);
                 $discount = $coupon ? $this->calculateDiscount($coupon, $total) : 0;
                 $shippingMethod = $this->findActiveShippingMethod($data['shipping_method'] ?? null);
                 $shippingFee = $this->calculateShippingFee($shippingMethod, $total);
@@ -70,9 +73,9 @@ class CheckoutController extends Controller
                 $order = Order::create([
                     'user_id' => Auth::id(),
                     'coupon_id' => $coupon?->id,
-                    'customer_name' => $data['customer_name'],
-                    'customer_phone' => $data['customer_phone'],
-                    'customer_address' => $data['customer_address'],
+                    'customer_name' => $selectedAddress?->recipient_name ?? $data['customer_name'],
+                    'customer_phone' => $selectedAddress?->phone ?? $data['customer_phone'],
+                    'customer_address' => $selectedAddress?->full_address ?? $data['customer_address'],
                     'shipping_method_code' => $shippingMethod?->code,
                     'shipping_method_name' => $shippingMethod?->name,
                     'total_price' => $total,
@@ -81,6 +84,15 @@ class CheckoutController extends Controller
                     'final_price' => $finalPrice,
                     'status' => 'pending',
                 ]);
+
+                $order->addStatusHistory(
+                    null,
+                    'pending',
+                    $request->user(),
+                    'Order placed by customer.',
+                    $request->ip(),
+                    $request->userAgent(),
+                );
 
                 foreach ($cart->items as $item) {
                     $variant = ProductVariant::with(['product', 'size', 'color'])->lockForUpdate()->findOrFail($item->product_variant_id);
@@ -137,6 +149,15 @@ class CheckoutController extends Controller
         }
 
         return min((float) $coupon->discount_value, $total);
+    }
+
+    private function findUserAddress(?int $addressId): ?UserAddress
+    {
+        if (! $addressId) {
+            return null;
+        }
+
+        return UserAddress::where('user_id', Auth::id())->whereKey($addressId)->first();
     }
 
     private function findActiveShippingMethod(?string $code): ?ShippingMethod

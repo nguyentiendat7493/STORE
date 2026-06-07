@@ -14,6 +14,7 @@ class CheckoutRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'address_id' => ['nullable', 'integer', 'exists:user_addresses,id'],
             'customer_name' => ['required', 'string', 'max:100'],
             'customer_phone' => ['required', 'string', 'max:20'],
             'customer_address' => ['required', 'string'],

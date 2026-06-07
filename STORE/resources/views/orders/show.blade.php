@@ -39,6 +39,26 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="sidebar-box mt-3">
+                    <h2 class="h5">Order Timeline</h2>
+                    @forelse ($order->statusHistories as $history)
+                        <div class="border-top py-3">
+                            <div class="d-flex justify-content-between gap-3">
+                                <div>
+                                    <div class="fw-semibold">
+                                        {{ $history->from_status ? ucfirst($history->from_status).' to ' : '' }}{{ ucfirst($history->to_status) }}
+                                    </div>
+                                    @if ($history->note)
+                                        <div class="small text-muted">{{ $history->note }}</div>
+                                    @endif
+                                </div>
+                                <div class="small text-muted text-end">{{ $history->created_at?->format('d/m/Y H:i') }}</div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="text-muted">No status history yet.</div>
+                    @endforelse
+                </div>
             </div>
             <div class="col-lg-4">
                 <div class="sidebar-box mb-3">

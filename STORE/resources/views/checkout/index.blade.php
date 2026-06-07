@@ -17,17 +17,36 @@
             <div class="col-lg-7">
                 <form class="sidebar-box" method="POST" action="{{ route('checkout.store') }}">
                     @csrf
+                    @if ($addresses->isNotEmpty())
+                        <div class="mb-3">
+                            <label class="form-label">Saved address</label>
+                            <select class="form-select" name="address_id" id="checkout-address">
+                                <option value="">Enter a new address</option>
+                                @foreach ($addresses as $address)
+                                    <option
+                                        value="{{ $address->id }}"
+                                        data-name="{{ $address->recipient_name }}"
+                                        data-phone="{{ $address->phone }}"
+                                        data-address="{{ $address->full_address }}"
+                                        @selected(old('address_id', $address->is_default ? $address->id : null) == $address->id)
+                                    >
+                                        {{ $address->label }}{{ $address->is_default ? ' - Default' : '' }} - {{ $address->full_address }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    @endif
                     <div class="mb-3">
                         <label class="form-label">Recipient name</label>
-                        <input class="form-control" name="customer_name" value="{{ old('customer_name', auth()->user()->name) }}" required>
+                        <input class="form-control" id="checkout-name" name="customer_name" value="{{ old('customer_name', $addresses->firstWhere('is_default', true)?->recipient_name ?? auth()->user()->name) }}" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Phone</label>
-                        <input class="form-control" name="customer_phone" value="{{ old('customer_phone', auth()->user()->phone) }}" required>
+                        <input class="form-control" id="checkout-phone" name="customer_phone" value="{{ old('customer_phone', $addresses->firstWhere('is_default', true)?->phone ?? auth()->user()->phone) }}" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Shipping address</label>
-                        <textarea class="form-control" name="customer_address" rows="4" required>{{ old('customer_address', auth()->user()->address) }}</textarea>
+                        <textarea class="form-control" id="checkout-address-text" name="customer_address" rows="4" required>{{ old('customer_address', $addresses->firstWhere('is_default', true)?->full_address ?? auth()->user()->address) }}</textarea>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Coupon code</label>
@@ -89,3 +108,27 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        const addressSelect = document.getElementById('checkout-address');
+
+        if (addressSelect) {
+            const nameInput = document.getElementById('checkout-name');
+            const phoneInput = document.getElementById('checkout-phone');
+            const addressInput = document.getElementById('checkout-address-text');
+
+            addressSelect.addEventListener('change', () => {
+                const selected = addressSelect.options[addressSelect.selectedIndex];
+
+                if (!selected.value) {
+                    return;
+                }
+
+                nameInput.value = selected.dataset.name || nameInput.value;
+                phoneInput.value = selected.dataset.phone || phoneInput.value;
+                addressInput.value = selected.dataset.address || addressInput.value;
+            });
+        }
+    </script>
+@endpush

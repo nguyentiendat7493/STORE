@@ -24,6 +24,7 @@
                             <option value="{{ $status }}" @selected($order->status === $status)>{{ ucfirst($status) }}</option>
                         @endforeach
                     </select>
+                    <textarea class="form-control mb-3" name="note" rows="3" placeholder="Internal status note"></textarea>
                     <button class="btn btn-dark w-100" type="submit">Update Order</button>
                 </form>
             </div>
@@ -60,6 +61,28 @@
                     <dt class="col-5">Final price</dt><dd class="col-7 fw-bold">{{ $order->display_final_price }}</dd>
                     <dt class="col-5">Payment status</dt><dd class="col-7">{{ $order->payment?->payment_status ?? 'none' }}</dd>
                 </dl>
+            </div>
+
+            <div class="panel panel-pad mt-4">
+                <h2 class="h5">Status Timeline</h2>
+                @forelse ($order->statusHistories as $history)
+                    <div class="border-top py-3">
+                        <div class="d-flex justify-content-between gap-3">
+                            <div>
+                                <div class="fw-semibold">
+                                    {{ $history->from_status ? ucfirst($history->from_status).' to ' : '' }}{{ ucfirst($history->to_status) }}
+                                </div>
+                                @if ($history->note)
+                                    <div class="text-muted small">{{ $history->note }}</div>
+                                @endif
+                                <div class="text-muted small">By {{ $history->changed_by_name ?? 'System' }}</div>
+                            </div>
+                            <div class="text-muted small text-end">{{ $history->created_at?->format('d/m/Y H:i') }}</div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="text-muted">No status history yet.</div>
+                @endforelse
             </div>
         </div>
     </div>
