@@ -473,17 +473,37 @@ class CoreDemoSeeder extends Seeder
             }
 
             if (Schema::hasTable('shipping_methods')) {
-                ShippingMethod::updateOrCreate(
-                    ['code' => 'standard'],
+                foreach ([
                     [
                         'name' => 'Standard Shipping',
+                        'code' => 'standard',
                         'description' => 'Domestic delivery in 2-4 business days.',
                         'fee' => 30000,
                         'min_order_value' => 1500000,
-                        'status' => true,
                         'sort_order' => 1,
                     ],
-                );
+                    [
+                        'name' => 'Express Shipping',
+                        'code' => 'express',
+                        'description' => 'Priority delivery in 1-2 business days.',
+                        'fee' => 60000,
+                        'min_order_value' => 2500000,
+                        'sort_order' => 2,
+                    ],
+                    [
+                        'name' => 'Store Pickup',
+                        'code' => 'pickup',
+                        'description' => 'Pick up at the showroom after confirmation.',
+                        'fee' => 0,
+                        'min_order_value' => 0,
+                        'sort_order' => 3,
+                    ],
+                ] as $method) {
+                    ShippingMethod::updateOrCreate(
+                        ['code' => $method['code']],
+                        $method + ['status' => true],
+                    );
+                }
             }
 
             if (Schema::hasTable('payment_methods')) {

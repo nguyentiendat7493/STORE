@@ -26,6 +26,19 @@
                         <label class="form-label">Mã giảm giá</label>
                         <input class="form-control" name="coupon_code" value="{{ old('coupon_code') }}">
                     </div>
+                    @if ($shippingMethods->isNotEmpty())
+                        <div class="mb-3">
+                            <label class="form-label">Shipping method</label>
+                            <select class="form-select" name="shipping_method">
+                                @foreach ($shippingMethods as $method)
+                                    @php($isFree = (float) $cart->total >= (float) $method->min_order_value && (float) $method->min_order_value > 0)
+                                    <option value="{{ $method->code }}" @selected(old('shipping_method') === $method->code)>
+                                        {{ $method->name }} - {{ $isFree ? 'Free' : number_format((float) $method->fee, 0, ',', '.').' VND' }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    @endif
                     <div class="mb-3">
                         <label class="form-label">Phương thức thanh toán</label>
                         <select class="form-select" name="payment_method" required>

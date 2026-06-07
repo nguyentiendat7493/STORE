@@ -8,6 +8,7 @@ use App\Models\Cart;
 use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\ProductVariant;
+use App\Models\ShippingMethod;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,7 +27,9 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->withErrors(['cart' => 'Giỏ hàng của bạn đang trống.']);
         }
 
-        return view('checkout.index', compact('cart'));
+        $shippingMethods = ShippingMethod::active()->get();
+
+        return view('checkout.index', compact('cart', 'shippingMethods'));
     }
 
     public function store(CheckoutRequest $request): RedirectResponse
