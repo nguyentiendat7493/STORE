@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminPaymentController;
 use App\Http\Controllers\Admin\AdminProductController;
+use App\Http\Controllers\Admin\AdminSettingController;
 use App\Http\Controllers\Admin\AdminSizeController;
 use App\Http\Controllers\Admin\AdminVariantController;
 use App\Http\Controllers\Frontend\AuthController;
@@ -57,6 +58,8 @@ Route::prefix('admin')
     ->middleware(['auth', 'staff'])
     ->group(function (): void {
         Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+        Route::get('settings', [AdminSettingController::class, 'index'])->name('settings.index');
+        Route::put('settings', [AdminSettingController::class, 'update'])->name('settings.update');
 
         Route::resource('categories', AdminCategoryController::class)->except('show');
         Route::resource('brands', AdminBrandController::class)->except('show');

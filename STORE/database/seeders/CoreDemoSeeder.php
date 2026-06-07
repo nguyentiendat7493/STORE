@@ -12,6 +12,7 @@ use App\Models\Order;
 use App\Models\PaymentMethod;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\Setting;
 use App\Models\ShippingMethod;
 use App\Models\Size;
 use App\Models\User;
@@ -225,6 +226,26 @@ class CoreDemoSeeder extends Seeder
                     'status' => true,
                 ],
             );
+
+            if (Schema::hasTable('settings')) {
+                foreach ([
+                    ['key' => 'site_name', 'value' => 'STORE', 'type' => 'text', 'group_name' => 'general', 'is_public' => true],
+                    ['key' => 'site_email', 'value' => 'support@store.local', 'type' => 'text', 'group_name' => 'general', 'is_public' => true],
+                    ['key' => 'site_hotline', 'value' => '0900 000 000', 'type' => 'text', 'group_name' => 'general', 'is_public' => true],
+                    ['key' => 'site_address', 'value' => '12 Nguyen Hue, District 1, Ho Chi Minh City', 'type' => 'textarea', 'group_name' => 'general', 'is_public' => true],
+                    ['key' => 'footer_description', 'value' => 'Minimal fashion, editorial styling and modern ecommerce CMS controls.', 'type' => 'textarea', 'group_name' => 'footer', 'is_public' => true],
+                    ['key' => 'site_facebook', 'value' => 'https://facebook.com/store', 'type' => 'text', 'group_name' => 'social', 'is_public' => true],
+                    ['key' => 'site_instagram', 'value' => 'https://instagram.com/store', 'type' => 'text', 'group_name' => 'social', 'is_public' => true],
+                    ['key' => 'site_tiktok', 'value' => '', 'type' => 'text', 'group_name' => 'social', 'is_public' => true],
+                    ['key' => 'site_zalo', 'value' => '', 'type' => 'text', 'group_name' => 'social', 'is_public' => true],
+                    ['key' => 'primary_color', 'value' => '#111111', 'type' => 'color', 'group_name' => 'theme', 'is_public' => true],
+                    ['key' => 'accent_color', 'value' => '#D6C4A1', 'type' => 'color', 'group_name' => 'theme', 'is_public' => true],
+                    ['key' => 'default_meta_title', 'value' => 'Fashion Ecommerce CMS', 'type' => 'text', 'group_name' => 'seo', 'is_public' => true],
+                    ['key' => 'default_meta_description', 'value' => 'Premium fashion ecommerce storefront with configurable CMS settings.', 'type' => 'textarea', 'group_name' => 'seo', 'is_public' => true],
+                ] as $setting) {
+                    Setting::updateOrCreate(['key' => $setting['key']], $setting);
+                }
+            }
 
             if (Schema::hasTable('shipping_methods')) {
                 ShippingMethod::updateOrCreate(

@@ -6,6 +6,9 @@ use App\Repositories\Contracts\ProductRepositoryInterface;
 use App\Repositories\Contracts\SettingRepositoryInterface;
 use App\Repositories\Eloquent\ProductRepository;
 use App\Repositories\Eloquent\SettingRepository;
+use App\Models\Setting;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -24,6 +27,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        View::composer('*', function ($view): void {
+            $siteSettings = [];
+
+            if (Schema::hasTable('settings')) {
+                $siteSettings = Setting::query()
+                    ->public()
+                    ->pluck('value', 'key')
+                    ->all();
+            }
+
+            $view->with('siteSettings', $siteSettings);
+        });
     }
 }
