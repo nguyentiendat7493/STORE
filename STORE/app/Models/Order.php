@@ -18,8 +18,11 @@ class Order extends Model
         'customer_name',
         'customer_phone',
         'customer_address',
+        'shipping_method_code',
+        'shipping_method_name',
         'total_price',
         'discount_amount',
+        'shipping_fee',
         'final_price',
         'status',
     ];
@@ -27,6 +30,7 @@ class Order extends Model
     protected $casts = [
         'total_price' => 'decimal:2',
         'discount_amount' => 'decimal:2',
+        'shipping_fee' => 'decimal:2',
         'final_price' => 'decimal:2',
     ];
 
@@ -74,6 +78,11 @@ class Order extends Model
     public function getDisplayFinalPriceAttribute(): string
     {
         return number_format((float) $this->final_price, 0, ',', '.').' VND';
+    }
+
+    public function getDisplayShippingFeeAttribute(): string
+    {
+        return number_format((float) $this->shipping_fee, 0, ',', '.').' VND';
     }
 
     public function getCanCancelAttribute(): bool

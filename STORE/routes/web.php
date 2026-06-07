@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\AdminMenuItemController;
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\AdminPaymentController;
+use App\Http\Controllers\Admin\AdminPaymentMethodController;
 use App\Http\Controllers\Admin\AdminPageController;
 use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminReviewController;
@@ -113,6 +114,7 @@ Route::prefix('admin')
         Route::get('wishlists', [AdminWishlistController::class, 'index'])->name('wishlists.index');
         Route::resource('notifications', AdminNotificationController::class)->only(['index', 'create', 'store', 'show', 'update', 'destroy']);
         Route::resource('shipping-methods', AdminShippingMethodController::class)->except('show');
+        Route::resource('payment-methods', AdminPaymentMethodController::class)->except('show');
         Route::resource('orders', AdminOrderController::class)->only(['index', 'show']);
         Route::patch('orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.status');
 

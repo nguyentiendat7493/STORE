@@ -195,6 +195,7 @@
                     ['admin.notifications.index', 'bi-bell', 'Notifications'],
                     ['admin.menus.index', 'bi-list-nested', 'Menus'],
                     ['admin.shipping-methods.index', 'bi-truck', 'Shipping'],
+                    ['admin.payment-methods.index', 'bi-wallet2', 'Payment Methods'],
                     ['admin.products.index', 'bi-bag', 'Products'],
                     ['admin.categories.index', 'bi-grid', 'Categories'],
                     ['admin.brands.index', 'bi-award', 'Brands'],

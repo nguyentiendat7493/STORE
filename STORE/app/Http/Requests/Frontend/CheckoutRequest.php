@@ -19,7 +19,7 @@ class CheckoutRequest extends FormRequest
             'customer_address' => ['required', 'string'],
             'shipping_method' => ['nullable', 'exists:shipping_methods,code'],
             'coupon_code' => ['nullable', 'string', 'exists:coupons,code'],
-            'payment_method' => ['required', 'in:cod,bank_transfer,momo,vnpay'],
+            'payment_method' => ['required', 'in:cod,bank_transfer,momo,vnpay', 'exists:payment_methods,code'],
         ];
     }
 }

@@ -507,16 +507,51 @@ class CoreDemoSeeder extends Seeder
             }
 
             if (Schema::hasTable('payment_methods')) {
-                PaymentMethod::updateOrCreate(
-                    ['code' => 'cod'],
+                foreach ([
                     [
+                        'code' => 'cod',
                         'name' => 'Cash on Delivery',
                         'description' => 'Pay when the order arrives.',
                         'config' => [],
-                        'status' => true,
                         'sort_order' => 1,
                     ],
-                );
+                    [
+                        'code' => 'bank_transfer',
+                        'name' => 'Bank Transfer',
+                        'description' => 'Transfer to the store account after placing the order.',
+                        'config' => [
+                            'bank_name' => 'Demo Bank',
+                            'account_number' => '123456789',
+                            'account_name' => 'STORE COMPANY',
+                        ],
+                        'sort_order' => 2,
+                    ],
+                    [
+                        'code' => 'momo',
+                        'name' => 'MoMo',
+                        'description' => 'MoMo wallet payment tracking for demo orders.',
+                        'config' => [
+                            'phone' => '0900000000',
+                            'account_name' => 'STORE',
+                        ],
+                        'sort_order' => 3,
+                    ],
+                    [
+                        'code' => 'vnpay',
+                        'name' => 'VNPay',
+                        'description' => 'VNPay-ready payment method configuration.',
+                        'config' => [
+                            'terminal_code' => 'DEMO_STORE',
+                            'sandbox' => true,
+                        ],
+                        'sort_order' => 4,
+                    ],
+                ] as $method) {
+                    PaymentMethod::updateOrCreate(
+                        ['code' => $method['code']],
+                        $method + ['status' => true],
+                    );
+                }
             }
 
             $cart = Cart::firstOrCreate(['user_id' => $customer->id]);
@@ -549,6 +584,9 @@ class CoreDemoSeeder extends Seeder
                         'coupon_id' => null,
                         'customer_name' => 'Demo Customer',
                         'customer_address' => '12 Nguyen Hue, District 1, Ho Chi Minh City',
+                        'shipping_method_code' => 'standard',
+                        'shipping_method_name' => 'Standard Shipping',
+                        'shipping_fee' => 0,
                         'total_price' => $orderVariant->price,
                         'discount_amount' => 0,
                         'final_price' => $orderVariant->price,

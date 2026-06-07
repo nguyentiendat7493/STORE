@@ -7,6 +7,7 @@ use App\Http\Requests\Frontend\CheckoutRequest;
 use App\Models\Cart;
 use App\Models\Coupon;
 use App\Models\Order;
+use App\Models\PaymentMethod;
 use App\Models\ProductVariant;
 use App\Models\ShippingMethod;
 use Illuminate\Http\RedirectResponse;
@@ -28,8 +29,11 @@ class CheckoutController extends Controller
         }
 
         $shippingMethods = ShippingMethod::active()->get();
+        $paymentMethods = PaymentMethod::active()
+            ->whereIn('code', ['cod', 'bank_transfer', 'momo', 'vnpay'])
+            ->get();
 
-        return view('checkout.index', compact('cart', 'shippingMethods'));
+        return view('checkout.index', compact('cart', 'shippingMethods', 'paymentMethods'));
     }
 
     public function store(CheckoutRequest $request): RedirectResponse
@@ -59,7 +63,9 @@ class CheckoutController extends Controller
 
                 $coupon = $this->findActiveCoupon($data['coupon_code'] ?? null);
                 $discount = $coupon ? $this->calculateDiscount($coupon, $total) : 0;
-                $finalPrice = max($total - $discount, 0);
+                $shippingMethod = $this->findActiveShippingMethod($data['shipping_method'] ?? null);
+                $shippingFee = $this->calculateShippingFee($shippingMethod, $total);
+                $finalPrice = max($total - $discount + $shippingFee, 0);
 
                 $order = Order::create([
                     'user_id' => Auth::id(),
@@ -67,8 +73,11 @@ class CheckoutController extends Controller
                     'customer_name' => $data['customer_name'],
                     'customer_phone' => $data['customer_phone'],
                     'customer_address' => $data['customer_address'],
+                    'shipping_method_code' => $shippingMethod?->code,
+                    'shipping_method_name' => $shippingMethod?->name,
                     'total_price' => $total,
                     'discount_amount' => $discount,
+                    'shipping_fee' => $shippingFee,
                     'final_price' => $finalPrice,
                     'status' => 'pending',
                 ]);
@@ -128,5 +137,27 @@ class CheckoutController extends Controller
         }
 
         return min((float) $coupon->discount_value, $total);
+    }
+
+    private function findActiveShippingMethod(?string $code): ?ShippingMethod
+    {
+        if (! $code) {
+            return ShippingMethod::active()->first();
+        }
+
+        return ShippingMethod::active()->where('code', $code)->first();
+    }
+
+    private function calculateShippingFee(?ShippingMethod $shippingMethod, float $total): float
+    {
+        if (! $shippingMethod) {
+            return 0;
+        }
+
+        if ((float) $shippingMethod->min_order_value > 0 && $total >= (float) $shippingMethod->min_order_value) {
+            return 0;
+        }
+
+        return (float) $shippingMethod->fee;
     }
 }
