@@ -43,4 +43,20 @@ class OrderDetail extends Model
     {
         return number_format((float) $this->subtotal, 0, ',', '.').' VND';
     }
+
+    public function scopeSearch($query, ?string $keyword)
+    {
+        return $query->when($keyword, function ($query, string $keyword) {
+            $query->where('product_name', 'like', "%{$keyword}%")
+                ->orWhere('size_name', 'like', "%{$keyword}%")
+                ->orWhere('color_name', 'like', "%{$keyword}%");
+        });
+    }
+
+    public function scopeFilter($query, array $filters)
+    {
+        return $query
+            ->when($filters['order_id'] ?? null, fn ($query, $value) => $query->where('order_id', $value))
+            ->when($filters['product_variant_id'] ?? null, fn ($query, $value) => $query->where('product_variant_id', $value));
+    }
 }

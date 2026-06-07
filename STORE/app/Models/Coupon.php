@@ -49,6 +49,13 @@ class Coupon extends Model
         return $query->when($keyword, fn ($query) => $query->where('code', 'like', "%{$keyword}%"));
     }
 
+    public function scopeFilter($query, array $filters)
+    {
+        return $query
+            ->when($filters['discount_type'] ?? null, fn ($query, $value) => $query->where('discount_type', $value))
+            ->when(array_key_exists('status', $filters), fn ($query) => $query->where('status', $filters['status']));
+    }
+
     public function getDisplayDiscountAttribute(): string
     {
         if ($this->discount_type === 'percent') {

@@ -26,4 +26,9 @@ class Color extends Model
     {
         return $query->when($keyword, fn ($query) => $query->where('name', 'like', "%{$keyword}%"));
     }
+
+    public function scopeFilter($query, array $filters)
+    {
+        return $query->when($filters['hex_code'] ?? null, fn ($query, $value) => $query->where('hex_code', $value));
+    }
 }

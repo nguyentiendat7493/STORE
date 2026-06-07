@@ -25,4 +25,9 @@ class Size extends Model
     {
         return $query->when($keyword, fn ($query) => $query->where('name', 'like', "%{$keyword}%"));
     }
+
+    public function scopeFilter($query, array $filters)
+    {
+        return $query->when($filters['name'] ?? null, fn ($query, $value) => $query->where('name', $value));
+    }
 }

@@ -34,4 +34,19 @@ class Cart extends Model
     {
         return number_format($this->total, 0, ',', '.').' VND';
     }
+
+    public function scopeSearch($query, ?string $keyword)
+    {
+        return $query->when($keyword, function ($query, string $keyword) {
+            $query->whereHas('user', function ($query) use ($keyword) {
+                $query->where('name', 'like', "%{$keyword}%")
+                    ->orWhere('email', 'like', "%{$keyword}%");
+            });
+        });
+    }
+
+    public function scopeFilter($query, array $filters)
+    {
+        return $query->when($filters['user_id'] ?? null, fn ($query, $value) => $query->where('user_id', $value));
+    }
 }

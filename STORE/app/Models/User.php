@@ -35,6 +35,26 @@ class User extends Authenticatable
         return $this->hasMany(Order::class);
     }
 
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function wishlists(): HasMany
+    {
+        return $this->hasMany(Wishlist::class);
+    }
+
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(Notification::class);
+    }
+
+    public function blogs(): HasMany
+    {
+        return $this->hasMany(Blog::class);
+    }
+
     public function scopeSearch($query, ?string $keyword)
     {
         return $query->when($keyword, function ($query, string $keyword) {
@@ -51,9 +71,26 @@ class User extends Authenticatable
         return $query->when($role, fn ($query) => $query->where('role', $role));
     }
 
+    public function scopeFilter($query, array $filters)
+    {
+        return $query
+            ->when($filters['role'] ?? null, fn ($query, $value) => $query->where('role', $value))
+            ->when($filters['email'] ?? null, fn ($query, $value) => $query->where('email', $value));
+    }
+
+    public function scopeStaff($query)
+    {
+        return $query->whereIn('role', ['super_admin', 'admin', 'staff']);
+    }
+
     public function getIsAdminAttribute(): bool
     {
-        return $this->role === 'admin';
+        return in_array($this->role, ['super_admin', 'admin'], true);
+    }
+
+    public function getIsStaffAttribute(): bool
+    {
+        return in_array($this->role, ['super_admin', 'admin', 'staff'], true);
     }
 
     /**

@@ -63,6 +63,14 @@ class Order extends Model
         });
     }
 
+    public function scopeFilter($query, array $filters)
+    {
+        return $query
+            ->when($filters['user_id'] ?? null, fn ($query, $value) => $query->where('user_id', $value))
+            ->when($filters['coupon_id'] ?? null, fn ($query, $value) => $query->where('coupon_id', $value))
+            ->when($filters['status'] ?? null, fn ($query, $value) => $query->where('status', $value));
+    }
+
     public function getDisplayFinalPriceAttribute(): string
     {
         return number_format((float) $this->final_price, 0, ',', '.').' VND';
