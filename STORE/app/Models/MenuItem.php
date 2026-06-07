@@ -36,4 +36,25 @@ class MenuItem extends Model
     {
         return $this->hasMany(MenuItem::class, 'parent_id')->orderBy('sort_order');
     }
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', 1);
+    }
+
+    public function scopeSearch($query, ?string $keyword)
+    {
+        return $query->when($keyword, function ($query, string $keyword) {
+            $query->where('title', 'like', "%{$keyword}%")
+                ->orWhere('url', 'like', "%{$keyword}%");
+        });
+    }
+
+    public function scopeFilter($query, array $filters)
+    {
+        return $query
+            ->when($filters['menu_id'] ?? null, fn ($query, $value) => $query->where('menu_id', $value))
+            ->when($filters['parent_id'] ?? null, fn ($query, $value) => $query->where('parent_id', $value))
+            ->when(array_key_exists('status', $filters), fn ($query) => $query->where('status', $filters['status']));
+    }
 }

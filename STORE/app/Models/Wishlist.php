@@ -23,4 +23,18 @@ class Wishlist extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    public function scopeSearch($query, ?string $keyword)
+    {
+        return $query->when($keyword, function ($query, string $keyword) {
+            $query->whereHas('product', fn ($query) => $query->where('name', 'like', "%{$keyword}%"));
+        });
+    }
+
+    public function scopeFilter($query, array $filters)
+    {
+        return $query
+            ->when($filters['user_id'] ?? null, fn ($query, $value) => $query->where('user_id', $value))
+            ->when($filters['product_id'] ?? null, fn ($query, $value) => $query->where('product_id', $value));
+    }
 }

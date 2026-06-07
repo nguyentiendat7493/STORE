@@ -71,6 +71,13 @@ class User extends Authenticatable
         return $query->when($role, fn ($query) => $query->where('role', $role));
     }
 
+    public function scopeFilter($query, array $filters)
+    {
+        return $query
+            ->when($filters['role'] ?? null, fn ($query, $value) => $query->where('role', $value))
+            ->when($filters['email'] ?? null, fn ($query, $value) => $query->where('email', $value));
+    }
+
     public function scopeStaff($query)
     {
         return $query->whereIn('role', ['super_admin', 'admin', 'staff']);

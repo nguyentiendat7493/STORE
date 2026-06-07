@@ -30,4 +30,20 @@ class Notification extends Model
     {
         return $query->whereNull('read_at');
     }
+
+    public function scopeSearch($query, ?string $keyword)
+    {
+        return $query->when($keyword, function ($query, string $keyword) {
+            $query->where('title', 'like', "%{$keyword}%")
+                ->orWhere('message', 'like', "%{$keyword}%");
+        });
+    }
+
+    public function scopeFilter($query, array $filters)
+    {
+        return $query
+            ->when($filters['user_id'] ?? null, fn ($query, $value) => $query->where('user_id', $value))
+            ->when($filters['type'] ?? null, fn ($query, $value) => $query->where('type', $value))
+            ->when(($filters['unread'] ?? false), fn ($query) => $query->whereNull('read_at'));
+    }
 }

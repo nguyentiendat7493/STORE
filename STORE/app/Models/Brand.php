@@ -38,4 +38,9 @@ class Brand extends Model
                 ->orWhere('slug', 'like', "%{$keyword}%");
         });
     }
+
+    public function scopeFilter($query, array $filters)
+    {
+        return $query->when(array_key_exists('status', $filters), fn ($query) => $query->where('status', $filters['status']));
+    }
 }

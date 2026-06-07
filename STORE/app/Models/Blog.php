@@ -44,4 +44,26 @@ class Blog extends Model
                 $query->whereNull('published_at')->orWhere('published_at', '<=', now());
             });
     }
+
+    public function scopeSearch($query, ?string $keyword)
+    {
+        return $query->when($keyword, function ($query, string $keyword) {
+            $query->where('title', 'like', "%{$keyword}%")
+                ->orWhere('slug', 'like', "%{$keyword}%")
+                ->orWhere('excerpt', 'like', "%{$keyword}%");
+        });
+    }
+
+    public function scopeFilter($query, array $filters)
+    {
+        return $query
+            ->when($filters['blog_category_id'] ?? null, fn ($query, $value) => $query->where('blog_category_id', $value))
+            ->when($filters['user_id'] ?? null, fn ($query, $value) => $query->where('user_id', $value))
+            ->when($filters['status'] ?? null, fn ($query, $value) => $query->where('status', $value));
+    }
+
+    public function getSeoTitleAttribute(): string
+    {
+        return $this->meta_title ?: $this->title;
+    }
 }

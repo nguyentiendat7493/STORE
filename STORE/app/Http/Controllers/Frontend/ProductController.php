@@ -3,23 +3,22 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\Brand;
-use App\Models\Category;
-use App\Models\Color;
 use App\Models\Product;
-use App\Models\Size;
+use App\Services\Catalog\ProductCatalogService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ProductController extends Controller
 {
+    public function __construct(
+        private readonly ProductCatalogService $catalog,
+    ) {
+    }
+
     public function index(Request $request): View
     {
-        $products = Product::query()
-            ->active()
-            ->with(['category', 'brand', 'images', 'variants.size', 'variants.color'])
-            ->search($request->string('q')->toString())
-            ->filter($request->only([
+        $products = $this->catalog->paginate(
+            filters: $request->only([
                 'category_id',
                 'brand_id',
                 'gender',
@@ -27,21 +26,17 @@ class ProductController extends Controller
                 'max_price',
                 'size_id',
                 'color_id',
-            ]));
+            ]),
+            keyword: $request->string('q')->toString(),
+            sort: $request->input('sort'),
+        );
 
-        match ($request->input('sort')) {
-            'price_asc' => $products->orderBy('price'),
-            'price_desc' => $products->orderByDesc('price'),
-            'newest' => $products->latest(),
-            default => $products->latest(),
-        };
-
-        $products = $products->paginate(12)->withQueryString();
-
-        $categories = Category::active()->orderBy('name')->get();
-        $brands = Brand::active()->orderBy('name')->get();
-        $sizes = Size::orderBy('name')->get();
-        $colors = Color::orderBy('name')->get();
+        [
+            'categories' => $categories,
+            'brands' => $brands,
+            'sizes' => $sizes,
+            'colors' => $colors,
+        ] = $this->catalog->filterOptions();
 
         return view('products.index', compact(
             'products',
@@ -64,13 +59,7 @@ class ProductController extends Controller
             'variants.color',
         ]);
 
-        $relatedProducts = Product::active()
-            ->where('id', '!=', $product->id)
-            ->where('category_id', $product->category_id)
-            ->with(['images', 'brand'])
-            ->latest()
-            ->take(4)
-            ->get();
+        $relatedProducts = $this->catalog->related($product);
 
         return view('products.show', compact('product', 'relatedProducts'));
     }

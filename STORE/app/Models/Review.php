@@ -41,4 +41,19 @@ class Review extends Model
     {
         return $query->where('status', 'approved');
     }
+
+    public function scopeSearch($query, ?string $keyword)
+    {
+        return $query->when($keyword, fn ($query) => $query->where('comment', 'like', "%{$keyword}%"));
+    }
+
+    public function scopeFilter($query, array $filters)
+    {
+        return $query
+            ->when($filters['user_id'] ?? null, fn ($query, $value) => $query->where('user_id', $value))
+            ->when($filters['product_id'] ?? null, fn ($query, $value) => $query->where('product_id', $value))
+            ->when($filters['order_id'] ?? null, fn ($query, $value) => $query->where('order_id', $value))
+            ->when($filters['rating'] ?? null, fn ($query, $value) => $query->where('rating', $value))
+            ->when($filters['status'] ?? null, fn ($query, $value) => $query->where('status', $value));
+    }
 }

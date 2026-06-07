@@ -60,6 +60,15 @@ class ProductVariant extends Model
         return $query->when($keyword, fn ($query) => $query->where('sku', 'like', "%{$keyword}%"));
     }
 
+    public function scopeFilter($query, array $filters)
+    {
+        return $query
+            ->when($filters['product_id'] ?? null, fn ($query, $value) => $query->where('product_id', $value))
+            ->when($filters['size_id'] ?? null, fn ($query, $value) => $query->where('size_id', $value))
+            ->when($filters['color_id'] ?? null, fn ($query, $value) => $query->where('color_id', $value))
+            ->when(($filters['in_stock'] ?? false), fn ($query) => $query->where('stock', '>', 0));
+    }
+
     public function getDisplayPriceAttribute(): string
     {
         return number_format((float) $this->price, 0, ',', '.').' VND';

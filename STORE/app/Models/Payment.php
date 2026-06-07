@@ -37,4 +37,20 @@ class Payment extends Model
     {
         return $query->when($method, fn ($query) => $query->where('payment_method', $method));
     }
+
+    public function scopeSearch($query, ?string $keyword)
+    {
+        return $query->when($keyword, function ($query, string $keyword) {
+            $query->where('payment_method', 'like', "%{$keyword}%")
+                ->orWhere('payment_status', 'like', "%{$keyword}%");
+        });
+    }
+
+    public function scopeFilter($query, array $filters)
+    {
+        return $query
+            ->when($filters['order_id'] ?? null, fn ($query, $value) => $query->where('order_id', $value))
+            ->when($filters['payment_method'] ?? null, fn ($query, $value) => $query->where('payment_method', $value))
+            ->when($filters['payment_status'] ?? null, fn ($query, $value) => $query->where('payment_status', $value));
+    }
 }

@@ -39,4 +39,18 @@ class CartItem extends Model
     {
         return number_format($this->subtotal, 0, ',', '.').' VND';
     }
+
+    public function scopeSearch($query, ?string $keyword)
+    {
+        return $query->when($keyword, function ($query, string $keyword) {
+            $query->whereHas('productVariant', fn ($query) => $query->where('sku', 'like', "%{$keyword}%"));
+        });
+    }
+
+    public function scopeFilter($query, array $filters)
+    {
+        return $query
+            ->when($filters['cart_id'] ?? null, fn ($query, $value) => $query->where('cart_id', $value))
+            ->when($filters['product_variant_id'] ?? null, fn ($query, $value) => $query->where('product_variant_id', $value));
+    }
 }
