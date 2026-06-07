@@ -28,7 +28,11 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended('/');
+        $defaultRedirect = $request->user()?->is_staff
+            ? route('admin.dashboard')
+            : route('home');
+
+        return redirect()->intended($defaultRedirect);
     }
 
     public function showRegister(): View
@@ -45,7 +49,7 @@ class AuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        return redirect('/');
+        return redirect()->route('home');
     }
 
     public function logout(Request $request): RedirectResponse
