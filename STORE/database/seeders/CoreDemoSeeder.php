@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Banner;
 use App\Models\Brand;
 use App\Models\Cart;
 use App\Models\CartItem;
@@ -244,6 +245,59 @@ class CoreDemoSeeder extends Seeder
                     ['key' => 'default_meta_description', 'value' => 'Premium fashion ecommerce storefront with configurable CMS settings.', 'type' => 'textarea', 'group_name' => 'seo', 'is_public' => true],
                 ] as $setting) {
                     Setting::updateOrCreate(['key' => $setting['key']], $setting);
+                }
+            }
+
+            if (Schema::hasTable('banners')) {
+                foreach ([
+                    [
+                        'title' => 'Quiet Luxury For Every Day',
+                        'subtitle' => 'Tailored essentials, soft silhouettes and seasonless layers for the modern wardrobe.',
+                        'image' => 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=2200&q=85',
+                        'button_text' => 'Explore Collection',
+                        'button_url' => '/products',
+                        'position' => 'home_hero',
+                        'sort_order' => 1,
+                    ],
+                    [
+                        'title' => 'Soft Tailoring',
+                        'subtitle' => 'Blazers and trousers with relaxed structure.',
+                        'image' => 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1000&q=85',
+                        'button_text' => 'Shop Outerwear',
+                        'button_url' => '/products',
+                        'position' => 'home_promo',
+                        'sort_order' => 1,
+                    ],
+                    [
+                        'title' => 'The Minimal Dress',
+                        'subtitle' => 'Clean lines for day-to-evening dressing.',
+                        'image' => 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1000&q=85',
+                        'button_text' => 'Shop Dresses',
+                        'button_url' => '/products',
+                        'position' => 'home_promo',
+                        'sort_order' => 2,
+                    ],
+                    [
+                        'title' => 'Sale Edit',
+                        'subtitle' => 'Selected wardrobe pieces at reduced prices.',
+                        'image' => 'https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=1000&q=85',
+                        'button_text' => 'Shop Sale',
+                        'button_url' => '/products',
+                        'position' => 'home_promo',
+                        'sort_order' => 3,
+                    ],
+                ] as $banner) {
+                    Banner::updateOrCreate(
+                        [
+                            'position' => $banner['position'],
+                            'sort_order' => $banner['sort_order'],
+                        ],
+                        $banner + [
+                            'status' => true,
+                            'starts_at' => null,
+                            'ends_at' => null,
+                        ],
+                    );
                 }
             }
 

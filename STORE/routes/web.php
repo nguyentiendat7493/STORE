@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminBrandController;
+use App\Http\Controllers\Admin\AdminBannerController;
 use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminColorController;
 use App\Http\Controllers\Admin\AdminCouponController;
@@ -60,6 +61,7 @@ Route::prefix('admin')
         Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
         Route::get('settings', [AdminSettingController::class, 'index'])->name('settings.index');
         Route::put('settings', [AdminSettingController::class, 'update'])->name('settings.update');
+        Route::resource('banners', AdminBannerController::class)->except('show');
 
         Route::resource('categories', AdminCategoryController::class)->except('show');
         Route::resource('brands', AdminBrandController::class)->except('show');
