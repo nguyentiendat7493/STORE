@@ -32,7 +32,7 @@ class OrderController extends Controller
         return view('orders.show', compact('order'));
     }
 
-    public function cancel(Order $order): RedirectResponse
+    public function cancel(Request $request, Order $order): RedirectResponse
     {
         $this->authorizeOrder($order);
 
@@ -52,7 +52,7 @@ class OrderController extends Controller
             $fromStatus,
             'cancelled',
             $request->user(),
-            'Khách hàng đã hủy đơn.',
+            'Order cancelled by customer.',
             $request->ip(),
             $request->userAgent(),
         );

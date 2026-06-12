@@ -662,7 +662,7 @@ class CoreDemoSeeder extends Seeder
                         ],
                         [
                             'user_id' => $customer->id,
-                            'note' => 'Đơn demo đã được tạo.',
+                            'note' => 'Demo order created.',
                             'changed_by_name' => $customer->name,
                             'ip_address' => null,
                             'user_agent' => null,

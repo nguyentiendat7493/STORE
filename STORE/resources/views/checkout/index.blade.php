@@ -19,9 +19,9 @@
                     @csrf
                     @if ($addresses->isNotEmpty())
                         <div class="mb-3">
-                            <label class="form-label">Địa chỉ đã lưu</label>
+                            <label class="form-label">Saved address</label>
                             <select class="form-select" name="address_id" id="checkout-address">
-                                <option value="">Nhập địa chỉ mới</option>
+                                <option value="">Enter a new address</option>
                                 @foreach ($addresses as $address)
                                     <option
                                         value="{{ $address->id }}"
@@ -30,22 +30,22 @@
                                         data-address="{{ $address->full_address }}"
                                         @selected(old('address_id', $address->is_default ? $address->id : null) == $address->id)
                                     >
-                                        {{ $address->label }}{{ $address->is_default ? ' - Mặc định' : '' }} - {{ $address->full_address }}
+                                        {{ $address->label }}{{ $address->is_default ? ' - Default' : '' }} - {{ $address->full_address }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
                     @endif
                     <div class="mb-3">
-                        <label class="form-label">Tên người nhận</label>
+                        <label class="form-label">Recipient name</label>
                         <input class="form-control" id="checkout-name" name="customer_name" value="{{ old('customer_name', $addresses->firstWhere('is_default', true)?->recipient_name ?? auth()->user()->name) }}" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Số điện thoại</label>
+                        <label class="form-label">Phone</label>
                         <input class="form-control" id="checkout-phone" name="customer_phone" value="{{ old('customer_phone', $addresses->firstWhere('is_default', true)?->phone ?? auth()->user()->phone) }}" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Địa chỉ nhận hàng</label>
+                        <label class="form-label">Shipping address</label>
                         <textarea class="form-control" id="checkout-address-text" name="customer_address" rows="4" required>{{ old('customer_address', $addresses->firstWhere('is_default', true)?->full_address ?? auth()->user()->address) }}</textarea>
                     </div>
                     <div class="mb-3">

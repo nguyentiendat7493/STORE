@@ -89,7 +89,7 @@ class CheckoutController extends Controller
                     null,
                     'pending',
                     $request->user(),
-                    'Khách hàng đã đặt đơn.',
+                    'Order placed by customer.',
                     $request->ip(),
                     $request->userAgent(),
                 );
