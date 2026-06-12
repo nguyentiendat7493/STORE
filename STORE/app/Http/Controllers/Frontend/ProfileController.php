@@ -42,7 +42,7 @@ class ProfileController extends Controller
             'password' => Hash::make($request->string('password')->toString()),
         ]);
 
-        return back()->with('success', 'Đã cập nhật mật khẩu.');
+        return back()->with('success', 'Password updated.');
     }
 
     public function storeAddress(Request $request): RedirectResponse
@@ -57,7 +57,7 @@ class ProfileController extends Controller
 
         UserAddress::create($data);
 
-        return back()->with('success', 'Đã lưu địa chỉ.');
+        return back()->with('success', 'Address saved.');
     }
 
     public function updateAddress(Request $request, UserAddress $address): RedirectResponse
@@ -73,7 +73,7 @@ class ProfileController extends Controller
 
         $address->update($data);
 
-        return back()->with('success', 'Đã cập nhật địa chỉ.');
+        return back()->with('success', 'Address updated.');
     }
 
     public function setDefaultAddress(Request $request, UserAddress $address): RedirectResponse
@@ -83,7 +83,7 @@ class ProfileController extends Controller
         $request->user()->addresses()->update(['is_default' => false]);
         $address->update(['is_default' => true]);
 
-        return back()->with('success', 'Đã đặt địa chỉ mặc định.');
+        return back()->with('success', 'Default address updated.');
     }
 
     public function destroyAddress(Request $request, UserAddress $address): RedirectResponse
@@ -97,7 +97,7 @@ class ProfileController extends Controller
             $request->user()->addresses()->latest()->first()?->update(['is_default' => true]);
         }
 
-        return back()->with('success', 'Đã xóa địa chỉ.');
+        return back()->with('success', 'Address deleted.');
     }
 
     private function validatedAddress(Request $request): array
